@@ -1,11 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { TextComp } from "@/features/test";
 export default function Home() {
   return (
-    <div>
-      <Button>Click Me</Button>
-      <p className="text-red-500 fint-semibold">Nayram</p>
-      <TextComp />
+    <div className="flex justify-center items-center min-h-screen w-full border border-red-100">
+      <p className="text-bold text-lg text-teal-500">Landing Page</p>
     </div>
   );
 }
