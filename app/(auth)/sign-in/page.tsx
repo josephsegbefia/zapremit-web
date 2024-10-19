@@ -1,7 +1,12 @@
+import { SignInCard } from "@/features/auth/components/sign-in-card";
 import React from "react";
 
-const SignIn = () => {
-  return <div>SignIn</div>;
+const SignInPage = async () => {
+  return (
+    <div>
+      <SignInCard />
+    </div>
+  );
 };
 
-export default SignIn;
+export default SignInPage;
