@@ -22,7 +22,8 @@ export const useLogin = () => {
     },
     onSuccess: () => {
       toast.success("Logged in");
-      router.refresh();
+      // router.refresh();
+      router.push("/playground");
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {

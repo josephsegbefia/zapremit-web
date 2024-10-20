@@ -23,7 +23,8 @@ export const useRegister = () => {
     },
     onSuccess: () => {
       toast.success("Account created");
-      router.refresh();
+      // router.refresh();
+      router.push("/playground");
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {

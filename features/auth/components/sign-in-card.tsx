@@ -18,8 +18,10 @@ import { DottedSeparator } from "@/components/shared-components/dotted-separator
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useLogin } from "../api/use-login";
 
 export const SignInCard = () => {
+  const { mutate, isPending } = useLogin();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,7 +31,7 @@ export const SignInCard = () => {
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    console.log(values);
+    mutate({ json: values });
   };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
@@ -52,6 +54,7 @@ export const SignInCard = () => {
                       {...field}
                       type="email"
                       placeholder="Enter email address"
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -68,12 +71,18 @@ export const SignInCard = () => {
                       {...field}
                       type="password"
                       placeholder="Enter password"
+                      disabled={isPending}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button size="lg" className="w-full" variant="primary">
+            <Button
+              size="lg"
+              className="w-full"
+              variant="primary"
+              disabled={isPending}
+            >
               Sign In
             </Button>
           </form>
@@ -87,6 +96,7 @@ export const SignInCard = () => {
           variant="secondary"
           size="lg"
           className="w-full border border-neutral-100"
+          disabled={isPending}
         >
           <FcGoogle className="mr-2 size-5" />
           Login with Google
@@ -95,6 +105,7 @@ export const SignInCard = () => {
           variant="secondary"
           size="lg"
           className="w-full border border-neutral-100"
+          disabled={isPending}
         >
           <FaGithub className="mr-2 size-5" />
           Login with GitHub
