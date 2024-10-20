@@ -24,8 +24,10 @@ import { DottedSeparator } from "@/components/shared-components/dotted-separator
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRegister } from "../api/use-register";
 
 export const SignUpCard = () => {
+  const { mutate, isPending } = useRegister();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -36,7 +38,7 @@ export const SignUpCard = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    console.log(values);
+    mutate({ json: values });
   };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
@@ -85,6 +87,7 @@ export const SignUpCard = () => {
                       {...field}
                       type="email"
                       placeholder="Enter email address"
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,12 +104,18 @@ export const SignUpCard = () => {
                       {...field}
                       type="password"
                       placeholder="Enter password"
+                      disabled={isPending}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button size="lg" className="w-full" variant="primary">
+            <Button
+              size="lg"
+              className="w-full"
+              variant="primary"
+              disabled={isPending}
+            >
               Create account
             </Button>
           </form>
@@ -120,6 +129,7 @@ export const SignUpCard = () => {
           variant="secondary"
           size="lg"
           className="w-full border border-neutral-100"
+          disabled={isPending}
         >
           <FcGoogle className="mr-2 size-5" />
           Login with Google
@@ -128,6 +138,7 @@ export const SignUpCard = () => {
           variant="secondary"
           size="lg"
           className="w-full border border-neutral-100"
+          disabled={isPending}
         >
           <FaGithub className="mr-2 size-5" />
           Login with GitHub
