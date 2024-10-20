@@ -113,7 +113,7 @@ export const SignUpCard = () => {
             <Button
               size="lg"
               className="w-full"
-              variant="primary"
+              // variant="primary"
               disabled={isPending}
             >
               Create account

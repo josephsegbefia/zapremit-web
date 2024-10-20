@@ -80,7 +80,7 @@ export const SignInCard = () => {
             <Button
               size="lg"
               className="w-full"
-              variant="primary"
+              // variant="primary"
               disabled={isPending}
             >
               Sign In
