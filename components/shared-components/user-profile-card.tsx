@@ -5,6 +5,9 @@ import { formatDate } from "@/lib/utils";
 import { DottedSeparator } from "./dotted-separator";
 import { Separator } from "../ui/separator";
 import { UserProfileCountrySwitcher } from "./user-profile-country-switcher";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { User } from "lucide-react";
 
 interface UserProfileCardProps {
   user: Models.User<Models.Preferences>;
@@ -14,16 +17,29 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
   const firstName = splitName[0];
   const lastName = splitName[1];
   return (
-    <Card className="w-2/4 h-full border-none shadow-none">
+    <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
-        <CardTitle className="text-xl flex font-work-sans font-bold text-teal-600 items-center">
-          <RecipientAvatar
-            className="size-10 mr-5"
-            fallbackClassName="font-work-sans text-lg"
-            firstName={firstName}
-            lastName={lastName}
-          />
-          <p> Hey, {user.name}!</p>
+        <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
+          <div className="flex items-center">
+            <RecipientAvatar
+              className="size-10 mr-5"
+              fallbackClassName="font-work-sans text-lg"
+              firstName={firstName}
+              lastName={lastName}
+            />
+            <p> Hey, {user.name}!</p>
+          </div>
+          <Button
+            asChild
+            size="sm"
+            className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
+          >
+            {/* TODO => CHANGE THE HREF TO POINT TO THE APPROPRIATE PAGE */}
+            <Link href="/">
+              <User />
+              Go To Profile
+            </Link>
+          </Button>
         </CardTitle>
         <p className="text-muted-foreground text-sm font-work-sans">
           Member since - {formatDate(user.$createdAt)}

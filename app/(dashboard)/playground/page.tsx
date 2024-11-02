@@ -27,7 +27,7 @@ export default async function Home() {
       </section>
       <section className="flex flex-col w-full gap-3 md:flex-row">
         <InfoCard
-          title="Last Transfer"
+          title="Latest Transfer"
           recipientName={lastTransfer.recipientName}
           isTransferCard
           transferAmount={lastTransfer.transferAmount}
