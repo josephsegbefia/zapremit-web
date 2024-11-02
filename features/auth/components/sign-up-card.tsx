@@ -38,7 +38,14 @@ export const SignUpCard = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    mutate({ json: values });
+    mutate(
+      { json: values },
+      {
+        onSuccess: ({ data }) => {
+          console.log(data);
+        },
+      }
+    );
   };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">

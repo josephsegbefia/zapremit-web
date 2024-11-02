@@ -32,7 +32,14 @@ const app = new Hono()
 
     const { account } = await createAdminClient();
 
-    await account.create(ID.unique(), email, password, fullName);
+    const newAccount = await account.create(
+      ID.unique(),
+      email,
+      password,
+      fullName
+    );
+
+    // const newCustomer = await
     const session = await account.createEmailPasswordSession(email, password);
 
     setCookie(c, AUTH_COOKIE, session.secret, {
@@ -42,7 +49,7 @@ const app = new Hono()
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 30,
     });
-    return c.json({ success: true });
+    return c.json({ success: true, data: newAccount });
   })
   .post("/logout", sessionMiddleware, async (c) => {
     const account = c.get("account");
