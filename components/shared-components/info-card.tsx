@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "./dotted-separator";
-import { formatDate } from "@/lib/utils";
+// import { formatDate } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { RepeatIcon } from "lucide-react";
@@ -10,15 +10,15 @@ interface InfoCardProps {
   recipientName?: string;
   isTransferCard?: boolean;
   transferAmount?: string;
-  transferDate?: string;
+  transferDate?: Date;
 }
 const InfoCard = ({
   title,
   recipientName,
   isTransferCard,
   transferAmount,
-  transferDate,
-}: InfoCardProps) => {
+}: // transferDate,
+InfoCardProps) => {
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
@@ -41,7 +41,7 @@ const InfoCard = ({
           )}
         </CardTitle>
 
-        <DottedSeparator />
+        <DottedSeparator className="mt-4" />
       </CardHeader>
       <CardContent className="px-7 py-3">
         {isTransferCard && (
@@ -61,7 +61,7 @@ const InfoCard = ({
             <p className="font-bold font-work-sans text-muted-foreground">
               Date -{" "}
               <span className="font-semibold font-work-sans">
-                {formatDate(transferDate)}
+                {/* {transferDate && formatDate(transferDate)} */}
               </span>
             </p>
           </>

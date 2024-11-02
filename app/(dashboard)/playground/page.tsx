@@ -1,5 +1,7 @@
 import InfoCard from "@/components/shared-components/info-card";
+import { UserProfileCard } from "@/components/shared-components/user-profile-card";
 import { getCurrent } from "@/features/auth/actions";
+import { TopRecipientsList } from "@/features/recipients/components/top-recipients-list";
 // Import create recipient form
 
 import { redirect } from "next/navigation";
@@ -20,17 +22,22 @@ export default async function Home() {
 
   return (
     <>
+      <section className="flex flex-col w-full gap-3 md:flex-row mb-10">
+        <UserProfileCard user={user} />
+      </section>
       <section className="flex flex-col w-full gap-3 md:flex-row">
         <InfoCard
           title="Last Transfer"
           recipientName={lastTransfer.recipientName}
           isTransferCard
           transferAmount={lastTransfer.transferAmount}
-          transferDate={lastTransfer.transferDate}
+          // transferDate={lastTransfer.transferDate}
         />
         <InfoCard title="Current Exchange Rate" />
       </section>
-      <section></section>
+      <section className="flex flex-col w-full gap-3 md:flex-row mt-10">
+        <TopRecipientsList />
+      </section>
     </>
   );
 }
