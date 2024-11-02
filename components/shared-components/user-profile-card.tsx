@@ -17,7 +17,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
   const firstName = splitName[0];
   const lastName = splitName[1];
   return (
-    <Card className="w-full h-full border-none shadow-none">
+    <Card className="lg:w-2/3 h-full border-none shadow-none w-full">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
           <div className="flex items-center">
@@ -45,7 +45,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
           Member since - {formatDate(user.$createdAt)}
         </p>
         <DottedSeparator className="mt-3 mb-5" />
-        <div className="flex flex-row justify-around">
+        <div className="flex flex-row justify-evenly gap-2 overflow-y-hidden">
           <div className="bg-teal-50 px-5 py-2 rounded-lg">
             <p className="text-muted-foreground font-work-sans text-sm font-bold">
               Points
