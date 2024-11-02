@@ -73,7 +73,7 @@ export const UserProfileCountrySwitcher = () => {
           <CommandInput placeholder="Search country" />
           <CommandList>
             <CommandEmpty>No country found</CommandEmpty>
-            <CommandGroup>
+            <CommandGroup className="bg-teal-50">
               {countries.map((country) => (
                 <CommandItem
                   key={country.value}
@@ -82,7 +82,7 @@ export const UserProfileCountrySwitcher = () => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
-                  className="font-work-sans text-teal-600"
+                  className="font-work-sans text-teal-600 hover:bg-white hover:text-teal-600 cursor-pointer"
                 >
                   <Check
                     className={cn(

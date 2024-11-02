@@ -3,7 +3,7 @@ import { DottedSeparator } from "./dotted-separator";
 // import { formatDate } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { RepeatIcon } from "lucide-react";
+import { RepeatIcon, Send } from "lucide-react";
 
 interface InfoCardProps {
   title: string;
@@ -35,6 +35,21 @@ InfoCardProps) => {
                 <Link href="/">
                   <RepeatIcon />
                   Repeat Transfer
+                </Link>
+              </Button>
+            </>
+          )}
+          {!isTransferCard && (
+            <>
+              <Button
+                asChild
+                size="sm"
+                className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
+              >
+                {/* TODO => CHANGE THE HREF TO POINT TO THE APPROPRIATE PAGE */}
+                <Link href="/">
+                  <Send />
+                  Send Money Now
                 </Link>
               </Button>
             </>
