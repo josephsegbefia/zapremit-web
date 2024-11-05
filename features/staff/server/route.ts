@@ -3,14 +3,14 @@ import { Hono } from "hono";
 import { createStaffSchema, staffLoginSchema } from "../schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { createAdminClient } from "@/lib/appwrite";
-import { ID } from "node-appwrite";
+import { Client, Databases, ID, Query } from "node-appwrite";
 import { DATABASE_ID, STAFF_ID, STAFF_IMAGES_BUCKET_ID } from "@/config";
 import { AUTH_COOKIE } from "@/features/auth/constants";
 import { deleteCookie, setCookie } from "hono/cookie";
 
 const app = new Hono()
   .post(
-    "/create-staff",
+    "/createstaff",
     zValidator("form", createStaffSchema),
     sessionMiddleware,
     async (c) => {
@@ -66,9 +66,24 @@ const app = new Hono()
       return c.json({ staffAccount: newStaffUserAccount, staff: newStaff });
     }
   )
-  .post("/staff-login", zValidator("json", staffLoginSchema), async (c) => {
+  .post("/stafflogin", zValidator("json", staffLoginSchema), async (c) => {
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
+
+    const databases = new Databases(client);
+
     const { email, password } = c.req.valid("json");
     const { account } = await createAdminClient();
+
+    const isStaff = await databases.listDocuments(DATABASE_ID, STAFF_ID, [
+      Query.equal("email", email),
+      Query.equal("roleId", ["admin-id", "manager-id", "support-id"]),
+    ]);
+
+    if (isStaff.documents.length === 0) {
+      throw new Error("You are not a staff member");
+    }
 
     const session = await account.createEmailPasswordSession(email, password);
     setCookie(c, AUTH_COOKIE, session.secret, {
@@ -81,7 +96,7 @@ const app = new Hono()
 
     return c.json({ success: true });
   })
-  .post("/staff-logout", sessionMiddleware, async (c) => {
+  .post("/stafflogout", sessionMiddleware, async (c) => {
     const account = c.get("account");
     deleteCookie(c, AUTH_COOKIE);
 
@@ -89,3 +104,5 @@ const app = new Hono()
 
     return c.json({ success: true });
   });
+
+export default app;
