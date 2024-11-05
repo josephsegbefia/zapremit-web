@@ -17,13 +17,12 @@ const app = new Hono()
       const databases = c.get("databases");
       const storage = c.get("storage");
       const user = c.get("user");
-      const { name, email, roleId, createdBy, image, password } =
-        c.req.valid("form");
+      const { name, email, roleId, image, password } = c.req.valid("form");
 
       const { account } = await createAdminClient();
 
       // TODO => later create a functionality to create temporary passwords and send it to new staff by email
-      const tempPassword = "123456789";
+      // const tempPassword = "123456789";
 
       const newStaffUserAccount = account.create(
         ID.unique(),
