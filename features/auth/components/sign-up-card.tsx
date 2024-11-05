@@ -25,9 +25,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRegister } from "../api/use-register";
+import { useCreateCustomer } from "@/features/customers/api/use-create-customer";
+import { useRouter } from "next/navigation";
 
 export const SignUpCard = () => {
+  const router = useRouter();
   const { mutate, isPending } = useRegister();
+  const {
+    mutate: createCustomerProfile,
+    isPending: isCreatingCustomerProfile,
+  } = useCreateCustomer();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -42,7 +49,12 @@ export const SignUpCard = () => {
       { json: values },
       {
         onSuccess: ({ data }) => {
-          console.log(data);
+          createCustomerProfile({
+            json: {
+              accountId: data.$id,
+            },
+          });
+          router.push("/playground");
         },
       }
     );

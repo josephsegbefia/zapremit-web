@@ -9,26 +9,16 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { User } from "lucide-react";
 
-interface UserProfileCardProps {
+interface SendReceiveCountryInfoProps {
   user: Models.User<Models.Preferences>;
 }
-export const UserProfileCard = ({ user }: UserProfileCardProps) => {
-  const splitName = user.name.split(/\s+/);
-  const firstName = splitName[0];
-  const lastName = splitName[1];
+export const SendReceiveCountryInfo = ({
+  user,
+}: SendReceiveCountryInfoProps) => {
   return (
     <Card className="lg:w-1/3 h-full border-none shadow-none w-full">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
-          <div className="flex items-center">
-            <RecipientAvatar
-              className="size-10 mr-5"
-              fallbackClassName="font-work-sans text-lg"
-              firstName={firstName}
-              lastName={lastName}
-            />
-            <p> Hey, {firstName}!</p>
-          </div>
           <Button
             asChild
             size="sm"

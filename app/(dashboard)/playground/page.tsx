@@ -1,4 +1,5 @@
 import InfoCard from "@/components/shared-components/info-card";
+import { SendReceiveCountryInfo } from "@/components/shared-components/send-receive-country-info";
 import { UserProfileCard } from "@/components/shared-components/user-profile-card";
 import { getCurrent } from "@/features/auth/actions";
 import { TopRecipientsList } from "@/features/recipients/components/top-recipients-list";
@@ -24,6 +25,8 @@ export default async function Home() {
     <>
       <section className="flex flex-col w-full gap-3 md:flex-row mb-10">
         <UserProfileCard user={user} />
+        <SendReceiveCountryInfo user={user} />
+        {/* <UserProfileCard user={user} /> */}
       </section>
       <section className="flex flex-col w-full gap-3 md:flex-row">
         <InfoCard
