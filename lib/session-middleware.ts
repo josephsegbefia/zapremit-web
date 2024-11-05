@@ -5,9 +5,11 @@ import {
   Client,
   Databases,
   Models,
+  Storage,
   type Account as AccountType,
   type Databases as DatabasesType,
   type Users as UsersType,
+  type Storage as StorageType,
 } from "node-appwrite";
 
 import { getCookie } from "hono/cookie";
@@ -20,6 +22,7 @@ type AdditionalContext = {
     account: AccountType;
     databases: DatabasesType;
     users: UsersType;
+    storage: StorageType;
     user: Models.User<Models.Preferences>;
   };
 };
@@ -40,10 +43,12 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
 
     const account = new Account(client);
     const databases = new Databases(client);
+    const storage = new Storage(client);
     const user = await account.get();
 
     c.set("account", account);
     c.set("databases", databases);
+    c.set("storage", storage);
     c.set("user", user);
 
     await next();
