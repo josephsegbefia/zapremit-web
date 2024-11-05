@@ -94,7 +94,7 @@ const app = new Hono()
       maxAge: 60 * 60,
     });
 
-    return c.json({ success: true });
+    return c.json({ success: true, data: isStaff });
   })
   .post("/stafflogout", sessionMiddleware, async (c) => {
     const account = c.get("account");

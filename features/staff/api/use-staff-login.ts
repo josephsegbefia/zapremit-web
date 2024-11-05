@@ -24,9 +24,16 @@ export const useStaffLogin = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       toast.success("Login successful. Have a good day at work");
-      router.refresh();
+      if (data.documents[0].roleId === "admin-id") {
+        router.push("/backroom/staff/admin");
+      } else if (data.documents[0].roleId === "manager-id") {
+        router.push("/backroom/staff/manager");
+      } else {
+        router.push("/backroom/staff/support");
+      }
+
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {
