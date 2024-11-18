@@ -18,7 +18,7 @@ const app = new Hono().post(
     const databases = c.get("databases");
     const user = c.get("user");
 
-    const { accountId } = c.req.valid("json");
+    // const { accountId } = c.req.valid("json");
 
     const customer = await databases.createDocument(
       DATABASE_ID,
