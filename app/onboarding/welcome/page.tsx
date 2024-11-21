@@ -5,7 +5,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "@/components/shared-components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getCustomer } from "@/features/onboarding/queries";
+import { getCustomer } from "@/features/customers/queries";
 
 const WelcomePage = async () => {
   const user = await getCurrent();

@@ -1,6 +1,6 @@
 import { getCurrent } from "@/features/auth/actions";
 import UpdateCustomerPersonalInfoForm from "@/features/customers/components/update-customer-personal-info-form";
-import { getCustomer } from "@/features/onboarding/queries";
+import { getCustomer } from "@/features/customers/queries";
 import { redirect } from "next/navigation";
 
 const CustomerPersonalInformationPage = async () => {

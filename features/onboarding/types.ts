@@ -1,12 +1,28 @@
 import { Models } from "node-appwrite";
 
-export type Customer = Models.Document & {
-  accountId: string;
-  phone: string;
-  street: string;
-  postcode: string;
-  city: string;
-  originCountry: string;
-  beneficiaryCountry: string;
-  dateofBirth: string;
+export enum CountryType {
+  ORIGIN = "ORIGIN",
+  BENEFICIARY = "BENEFICIARY",
+}
+
+export enum RegionType {
+  AFRICA = "AFRICA",
+  EUROPE = "EUROPE",
+  OCEANIA = "OCEANIA",
+  AMERICAS = "AMERICAS",
+  ASIA = "ASIA",
+}
+
+export type Country = Models.Document & {
+  name: string;
+  ISOCode: string;
+  currency: string;
+  countryType: CountryType;
+  paymentMethods: string[];
+  language: string;
+  flagImageUrl: string;
+  callingCode: string;
+  currencyCode: string;
+  currencySymbol: string;
+  region: RegionType;
 };

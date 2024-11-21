@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateCustomerPersonalDetailsSchema } from "@/features/onboarding/schemas";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Customer } from "@/features/onboarding/types";
+import { Customer } from "@/features/customers/types";
 import { useRouter } from "next/navigation";
 import { useUpdateCustomerPersonalInformation } from "@/features/onboarding/api/use-update-customer-personal-information";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,29 +1,46 @@
 import { createSessionClient } from "@/lib/appwrite";
-import { Customer } from "./types";
-import { CUSTOMERS_ID, DATABASE_ID } from "@/config";
+import { Country } from "./types";
+import { COUNTRIES_ID, DATABASE_ID } from "@/config";
 import { Query } from "node-appwrite";
 
-export const getCustomer = async (): Promise<Customer | null> => {
+export const getOriginCountries = async () => {
   try {
-    const { databases, account } = await createSessionClient();
-    const user = await account.get();
-    console.log(user.$id);
+    const { databases } = await createSessionClient();
 
-    const foundCustomer = await databases.listDocuments<Customer>(
+    const originCountries = await databases.listDocuments(
       DATABASE_ID,
-      CUSTOMERS_ID,
-      [Query.equal("accountId", user.$id)]
+      COUNTRIES_ID,
+      [Query.equal("countryType", "ORIGIN")]
     );
 
-    if (foundCustomer.total === 0) {
-      return null;
+    if (originCountries.total === 0) {
+      return { documents: [], total: 0 };
     }
 
-    // Extract the first customer document
-    const customer = foundCustomer.documents[0];
-    return customer;
+    return originCountries;
   } catch (error) {
     console.log(error);
-    return null;
+    return { documents: [], total: 0 };
+  }
+};
+
+export const getBeneficiaryCountries = async () => {
+  try {
+    const { databases } = await createSessionClient();
+
+    const beneficiaryCountries = await databases.listDocuments(
+      DATABASE_ID,
+      COUNTRIES_ID,
+      [Query.equal("countryType", "BENEFICIARY")]
+    );
+
+    if (beneficiaryCountries.total === 0) {
+      return { documents: [], total: 0 };
+    }
+
+    return beneficiaryCountries;
+  } catch (error) {
+    console.log(error);
+    return { documents: [], total: 0 };
   }
 };

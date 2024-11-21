@@ -4,3 +4,4 @@ export const STAFF_ID = process.env.NEXT_PUBLIC_APPWRITE_STAFF_ID!;
 export const ROLES_ID = process.env.NEXT_PUBLIC_APPWRITE_ROLES_ID!;
 export const STAFF_IMAGES_BUCKET_ID =
   process.env.NEXT_PUBLIC_APPWRITE_STAFF_IMAGES_BUCKET_ID!;
+export const COUNTRIES_ID = process.env.NEXT_PUBLIC_APPWRITE_COUNTRIES_ID!;
