@@ -1,33 +1,29 @@
 import { createSessionClient } from "@/lib/appwrite";
 import { Customer } from "./types";
 import { CUSTOMERS_ID, DATABASE_ID } from "@/config";
+import { Query } from "node-appwrite";
 
-interface GetCustomerProps {
-  customerId: string;
-}
-
-export const getCustomer = async ({ customerId }: GetCustomerProps) => {
+export const getCustomer = async (): Promise<Customer | null> => {
   try {
     const { databases, account } = await createSessionClient();
     const user = await account.get();
+    console.log(user.$id);
 
-    const customer = await databases.getDocument<Customer>(
+    const foundCustomer = await databases.listDocuments<Customer>(
       DATABASE_ID,
       CUSTOMERS_ID,
-      customerId
+      [Query.equal("accountId", user.$id)]
     );
 
-    if (!customer) {
+    if (foundCustomer.total === 0) {
       return null;
     }
-    return {
-      user,
-      customer,
-    };
+
+    // Extract the first customer document
+    const customer = foundCustomer.documents[0];
+    return customer;
   } catch (error) {
-    console.error("Error retrieving customer data:", error);
-    throw new Error(
-      "Failed to retrieve customer data. Please try again later."
-    );
+    console.log(error);
+    return null;
   }
 };

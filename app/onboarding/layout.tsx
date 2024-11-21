@@ -16,7 +16,7 @@ const OnboardingLayout = ({ children }: OnboardingLayoutProps) => {
           </Link>
           <UserButton />
         </nav>
-        <div className="flex flex-col items-center justify-center py-4">
+        <div className="w-full flex flex-col items-center justify-center py-4">
           {children}
         </div>
       </div>

@@ -11,7 +11,7 @@ type RequestType = InferRequestType<
   (typeof client.api.onboarding)["update-customer-personal-information"][":customerId"]["$patch"]
 >;
 
-export const useUpdatePersonalInformation = () => {
+export const useUpdateCustomerPersonalInformation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
