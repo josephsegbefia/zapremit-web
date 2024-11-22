@@ -17,7 +17,7 @@ export const getOriginCountries = async () => {
       return { documents: [], total: 0 };
     }
 
-    return originCountries;
+    return originCountries.documents;
   } catch (error) {
     console.log(error);
     return { documents: [], total: 0 };
@@ -38,7 +38,7 @@ export const getBeneficiaryCountries = async () => {
       return { documents: [], total: 0 };
     }
 
-    return beneficiaryCountries;
+    return beneficiaryCountries.documents;
   } catch (error) {
     console.log(error);
     return { documents: [], total: 0 };

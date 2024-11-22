@@ -6,7 +6,13 @@ import { z } from "zod";
 import { Customer } from "@/features/customers/types";
 import { useRouter } from "next/navigation";
 import { useUpdateCustomerPersonalInformation } from "@/features/onboarding/api/use-update-customer-personal-information";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
 import { DottedSeparator } from "@/components/shared-components/dotted-separator";
@@ -66,6 +72,9 @@ const UpdateCustomerPersonalInfoForm = ({
           Personal Information
         </CardTitle>
       </CardHeader>
+      <CardDescription className="text-sm text-center mb-3 font-work-sans text-teal-600">
+        Tell us a bit more about yourself, now that you alos know about us.
+      </CardDescription>
       <div className="px-7">
         <DottedSeparator />
       </div>

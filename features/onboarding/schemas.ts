@@ -25,7 +25,7 @@ export const updateCustomerPersonalDetailsSchema = z.object({
   ),
 });
 
-export const updateCustomerCountriesInfo = z.object({
+export const updateCustomerCountriesInfoSchema = z.object({
   originCountry: z.string().trim().min(1, "Your country is required"),
   beneficiaryCountry: z
     .string()
