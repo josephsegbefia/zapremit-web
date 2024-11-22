@@ -54,7 +54,7 @@ export const SignUpCard = () => {
               accountId: data.$id,
             },
           });
-          router.push("/playground");
+          router.push("/onboarding/welcome");
         },
       }
     );

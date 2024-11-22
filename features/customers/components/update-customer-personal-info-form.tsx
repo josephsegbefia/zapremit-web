@@ -28,11 +28,11 @@ import { Models } from "node-appwrite";
 import DatePicker from "@/features/onboarding/components/date-picker";
 
 interface UpdateCustomerPersonalInfoFormProps {
-  initialValues: Customer;
+  customer: Customer;
   user: Models.User<Models.Preferences>;
 }
 const UpdateCustomerPersonalInfoForm = ({
-  initialValues,
+  customer,
   user,
 }: UpdateCustomerPersonalInfoFormProps) => {
   const router = useRouter();
@@ -41,7 +41,7 @@ const UpdateCustomerPersonalInfoForm = ({
   const form = useForm<z.infer<typeof updateCustomerPersonalDetailsSchema>>({
     resolver: zodResolver(updateCustomerPersonalDetailsSchema),
     defaultValues: {
-      ...initialValues,
+      ...customer,
     },
   });
 
@@ -52,11 +52,11 @@ const UpdateCustomerPersonalInfoForm = ({
       ...values,
     };
     mutate(
-      { json: finalValues, param: { customerId: initialValues.$id } },
+      { json: finalValues, param: { customerId: customer.$id } },
       {
         onSuccess: () => {
           form.reset();
-          router.push("/onboarding/customer-country-information");
+          router.push("/onboarding/kyc");
         },
       }
     );

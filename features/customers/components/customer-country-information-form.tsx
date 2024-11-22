@@ -21,6 +21,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Models } from "node-appwrite";
@@ -33,16 +34,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { Customer } from "../types";
 
 interface CustomerCountryInformationFormProps {
   user: Models.User<Models.Preferences>;
   originCountries: any;
   beneficiaryCountries: any;
+  customerId: Customer["$id"];
 }
 const CustomerCountryInformationForm = ({
   user,
   originCountries,
   beneficiaryCountries,
+  customerId,
 }: CustomerCountryInformationFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useUpdateCustomerCountriesInformation();
@@ -50,17 +54,25 @@ const CustomerCountryInformationForm = ({
   const form = useForm<z.infer<typeof updateCustomerCountriesInfoSchema>>({
     resolver: zodResolver(updateCustomerCountriesInfoSchema),
     defaultValues: {
-      originCountry: "",
-      beneficiaryCountry: "",
+      originCountryId: originCountries[0]?.$id || "",
+      beneficiaryCountryId: beneficiaryCountries[0]?.$id || "",
     },
   });
 
   const onSubmit = (
     values: z.infer<typeof updateCustomerCountriesInfoSchema>
   ) => {
-    mutate({
-      json: values,
-    });
+    mutate(
+      {
+        json: values,
+        param: { customerId: customerId },
+      },
+      {
+        onSuccess: () => {
+          router.push("/onboarding/personal-information");
+        },
+      }
+    );
   };
 
   return (
@@ -87,7 +99,7 @@ const CustomerCountryInformationForm = ({
             <div className="flex flex-col gap-y-10">
               <FormField
                 control={form.control}
-                name="originCountry"
+                name="originCountryId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Where are you located?</FormLabel>
@@ -103,7 +115,8 @@ const CustomerCountryInformationForm = ({
                         <SelectContent>
                           {originCountries.map((country: Country) => (
                             <SelectItem
-                              value={country.name}
+                              key={country.name}
+                              value={country.$id}
                               className="text-sm font-semibold"
                             >
                               <div className="flex flex-row justify-around gap-2">
@@ -124,10 +137,11 @@ const CustomerCountryInformationForm = ({
                   </FormItem>
                 )}
               />
+              <FormMessage />
 
               <FormField
                 control={form.control}
-                name="originCountry"
+                name="beneficiaryCountryId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Where are you sending money to?</FormLabel>
@@ -143,7 +157,8 @@ const CustomerCountryInformationForm = ({
                         <SelectContent>
                           {beneficiaryCountries.map((country: Country) => (
                             <SelectItem
-                              value={country.name}
+                              key={country.name}
+                              value={country.$id}
                               className="text-sm font-semibold"
                             >
                               <div className="flex flex-row justify-around gap-2">
@@ -164,6 +179,7 @@ const CustomerCountryInformationForm = ({
                   </FormItem>
                 )}
               />
+              <FormMessage />
             </div>
             <div className="py-7">
               <DottedSeparator />

@@ -1,5 +1,6 @@
 import { getCurrent } from "@/features/auth/actions";
 import CustomerCountryInformationForm from "@/features/customers/components/customer-country-information-form";
+import { getCustomer } from "@/features/customers/queries";
 import {
   getBeneficiaryCountries,
   getOriginCountries,
@@ -11,6 +12,12 @@ const CustomerCountryInformation = async () => {
   const user = await getCurrent();
   if (!user) redirect("/sign-in");
 
+  const customer = await getCustomer();
+
+  if (!customer?.$id) {
+    return null;
+  }
+
   const originCountries = await getOriginCountries();
   const beneficiaryCountries = await getBeneficiaryCountries();
 
@@ -21,6 +28,7 @@ const CustomerCountryInformation = async () => {
         originCountries={originCountries}
         beneficiaryCountries={beneficiaryCountries}
         user={user}
+        customerId={customer?.$id}
       />
     </div>
   );

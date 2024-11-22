@@ -26,8 +26,8 @@ export const updateCustomerPersonalDetailsSchema = z.object({
 });
 
 export const updateCustomerCountriesInfoSchema = z.object({
-  originCountry: z.string().trim().min(1, "Your country is required"),
-  beneficiaryCountry: z
+  originCountryId: z.string().trim().min(1, "Your country is required"),
+  beneficiaryCountryId: z
     .string()
     .trim()
     .min(1, "Your beneficiary country is required"),

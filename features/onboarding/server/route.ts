@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { DATABASE_ID, CUSTOMERS_ID } from "@/config";
 import {
-  updateCustomerCountriesInfo,
+  updateCustomerCountriesInfoSchema,
   updateCustomerPersonalDetailsSchema,
 } from "../schemas";
 
@@ -32,18 +32,18 @@ const app = new Hono()
   .patch(
     "/update-customer-countries-info/:customerId",
     sessionMiddleware,
-    zValidator("json", updateCustomerCountriesInfo),
+    zValidator("json", updateCustomerCountriesInfoSchema),
     async (c) => {
       const databases = c.get("databases");
 
       const { customerId } = c.req.param();
-      const { originCountry, beneficiaryCountry } = c.req.valid("json");
+      const { originCountryId, beneficiaryCountryId } = c.req.valid("json");
 
       const updatedCustomer = await databases.updateDocument(
         DATABASE_ID,
         CUSTOMERS_ID,
         customerId,
-        { originCountry, beneficiaryCountry }
+        { originCountryId, beneficiaryCountryId }
       );
 
       return c.json({ data: updatedCustomer });

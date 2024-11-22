@@ -7,18 +7,15 @@ const CustomerPersonalInformationPage = async () => {
   const user = await getCurrent();
   if (!user) redirect("/sign-in");
 
-  const initialValues = await getCustomer();
+  const customer = await getCustomer();
 
-  if (!initialValues) {
+  if (!customer) {
     return null;
   }
 
   return (
     <div className="w-full flex items-center justify-center">
-      <UpdateCustomerPersonalInfoForm
-        initialValues={initialValues}
-        user={user}
-      />
+      <UpdateCustomerPersonalInfoForm customer={customer} user={user} />
     </div>
   );
 };

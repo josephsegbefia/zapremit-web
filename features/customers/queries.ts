@@ -7,7 +7,7 @@ export const getCustomer = async (): Promise<Customer | null> => {
   try {
     const { databases, account } = await createSessionClient();
     const user = await account.get();
-    console.log(user.$id);
+    // console.log(user.$id);
 
     const foundCustomer = await databases.listDocuments<Customer>(
       DATABASE_ID,
