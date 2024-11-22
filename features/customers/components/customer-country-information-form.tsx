@@ -84,45 +84,98 @@ const CustomerCountryInformationForm = ({
       <CardContent className="p-7">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="originCountry"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Where are you located?</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isPending}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {originCountries.map((country: Country) => (
-                          <SelectItem
-                            value={country.name}
-                            className="text-sm font-semibold"
-                          >
-                            <div className="flex flex-row justify-around gap-2">
-                              <Image
-                                src={country.flagImageUrl}
-                                alt={`${country.name} flag`}
-                                width={30}
-                                height={20}
-                                className="mr-2 rounded-sm"
-                              />
-                              {country.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col gap-y-10">
+              <FormField
+                control={form.control}
+                name="originCountry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Where are you located?</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isPending}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {originCountries.map((country: Country) => (
+                            <SelectItem
+                              value={country.name}
+                              className="text-sm font-semibold"
+                            >
+                              <div className="flex flex-row justify-around gap-2">
+                                <Image
+                                  src={country.flagImageUrl}
+                                  alt={`${country.name} flag`}
+                                  width={30}
+                                  height={20}
+                                  className="mr-2 rounded-sm"
+                                />
+                                {country.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="originCountry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Where are you sending money to?</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isPending}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your beneficiary country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {beneficiaryCountries.map((country: Country) => (
+                            <SelectItem
+                              value={country.name}
+                              className="text-sm font-semibold"
+                            >
+                              <div className="flex flex-row justify-around gap-2">
+                                <Image
+                                  src={country.flagImageUrl}
+                                  alt={`${country.name} flag`}
+                                  width={30}
+                                  height={20}
+                                  className="mr-2 rounded-sm"
+                                />
+                                {country.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="py-7">
+              <DottedSeparator />
+            </div>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isPending}
+              className="bg-teal-800"
+            >
+              Save & continue
+            </Button>
           </form>
         </Form>
       </CardContent>
