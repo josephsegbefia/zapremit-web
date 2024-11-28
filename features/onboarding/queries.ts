@@ -1,7 +1,7 @@
 import { createSessionClient } from "@/lib/appwrite";
 import { Country } from "./types";
 import { COUNTRIES_ID, DATABASE_ID } from "@/config";
-import { Query } from "node-appwrite";
+import { Models, Query } from "node-appwrite";
 
 export const getOriginCountries = async () => {
   try {
@@ -24,7 +24,7 @@ export const getOriginCountries = async () => {
   }
 };
 
-export const getBeneficiaryCountries = async () => {
+export const getBeneficiaryCountries = async (): Promise<Country[] | null> => {
   try {
     const { databases } = await createSessionClient();
 
@@ -35,12 +35,34 @@ export const getBeneficiaryCountries = async () => {
     );
 
     if (beneficiaryCountries.total === 0) {
-      return { documents: [], total: 0 };
+      return null;
     }
 
-    return beneficiaryCountries.documents;
+    const countries: Country[] = beneficiaryCountries.documents.map(
+      (doc) =>
+        ({
+          $id: doc.$id,
+          $collectionId: doc.$collectionId,
+          $databaseId: doc.$databaseId,
+          $createdAt: doc.$createdAt,
+          $updatedAt: doc.$updatedAt,
+          name: doc["name"],
+          ISOCode: doc["ISOCode"],
+          currency: doc["currency"],
+          countryType: doc["countryType"],
+          paymentMethods: doc["paymentMethods"],
+          language: doc["language"],
+          flagImageUrl: doc["flagImageUrl"],
+          callingCode: doc["callingCode"],
+          currencyCode: doc["currencyCode"],
+          currencySymbol: doc["currencySymbol"],
+          region: doc["region"],
+        } as Country) // Use Type Assertion
+    );
+
+    return countries;
   } catch (error) {
     console.log(error);
-    return { documents: [], total: 0 };
+    return null;
   }
 };

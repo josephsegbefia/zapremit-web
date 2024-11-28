@@ -7,7 +7,7 @@ import { Separator } from "../ui/separator";
 import { UserProfileCountrySwitcher } from "./user-profile-country-switcher";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { User } from "lucide-react";
+import { MoveRight, User } from "lucide-react";
 import Image from "next/image";
 import {
   getCustomerBeneficiaryCountry,
@@ -35,6 +35,10 @@ export const SendReceiveCountryInfo = async ({
     return null;
   }
 
+  if (!beneficiaryCountries) {
+    return null;
+  }
+
   return (
     <Card className="lg:w-2/3 h-full border-none shadow-none w-full">
       <CardHeader className="flex px-7 py-3">
@@ -48,14 +52,13 @@ export const SendReceiveCountryInfo = async ({
         <DottedSeparator className="mt-3 mb-5" />
       </CardHeader>
       <CardContent className="py-4">
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-5">
           <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
-            {/* <p className="text-muted-foreground font-work-sans text-sm font-bold">
-              Sending country
-            </p> */}
             <OriginCountryViewer originCountry={originCountry} />
           </div>
-
+          <div className="flex items-center">
+            <MoveRight className="text-teal-600 size-4" />
+          </div>
           <div className="bg-teal-50 px-10 py-2 rounded-lg">
             <BeneficiaryCountrySwitcher
               beneficiaryCountry={beneficiaryCountry}

@@ -13,16 +13,17 @@ export enum RegionType {
   ASIA = "ASIA",
 }
 
-export type Country = Models.Document & {
+export interface Country extends Models.Document {
+  // Inherits Document properties like $id
   name: string;
   ISOCode: string;
   currency: string;
-  countryType: CountryType;
+  countryType: string; // or an enum
   paymentMethods: string[];
   language: string;
   flagImageUrl: string;
   callingCode: string;
   currencyCode: string;
   currencySymbol: string;
-  region: RegionType;
-};
+  region: RegionType; // or an enum
+}

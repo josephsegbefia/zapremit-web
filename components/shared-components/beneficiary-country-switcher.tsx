@@ -30,6 +30,8 @@ const BeneficiaryCountrySwitcher = ({
     if (selected) {
       setSelectedCountry(selected);
     }
+
+    // TODO => Later provide an API call to change the customer's selected/chosen beneficiary country.
   };
 
   console.log(beneficiaryCountry);
@@ -43,17 +45,20 @@ const BeneficiaryCountrySwitcher = ({
           height={20}
           className="mr-2 rounded-sm"
         />
-        <span className="font-work-sans text-sm font-semibold mr-2">
+        <span className="font-work-sans text-sm font-semibold mr-1  text-teal-800">
           {selectedCountry.name}
         </span>
-        <span className="font-work-sans text-sm font-semibold mr-4">
+        <span className="font-work-sans text-sm font-semibold mr-1  text-teal-800">
           ({selectedCountry.currencySymbol})
+        </span>
+        <span className="font-work-sans text-sm font-semibold mr-4  text-teal-800">
+          {selectedCountry.currencyCode}
         </span>
       </SelectTrigger>
       <SelectContent className="w-full border-none shadow-none">
         {countries.map((country) => (
           <SelectItem key={country.$id} value={country.name}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               <Image
                 src={country.flagImageUrl}
                 alt="country flag"
@@ -61,11 +66,14 @@ const BeneficiaryCountrySwitcher = ({
                 height={20}
                 className="mr-2 rounded-sm"
               />
-              <span className="font-work-sans text-sm font-semibold mr-2">
+              <span className="font-work-sans text-sm font-semibold mr-2 text-teal-800">
                 {country.name}
               </span>
-              <span className="font-work-sans text-sm font-semibold mr-4">
+              <span className="font-work-sans text-sm font-semibold mr-2 text-teal-800">
                 ({country.currencySymbol})
+              </span>
+              <span className="font-work-sans text-sm font-semibold mr-2  text-teal-800">
+                {country.currencyCode}
               </span>
             </div>
           </SelectItem>

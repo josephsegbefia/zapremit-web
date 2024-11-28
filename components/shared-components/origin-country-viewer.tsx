@@ -15,12 +15,15 @@ const OriginCountryViewer = ({ originCountry }: OriginCountryViewerProps) => {
         height={20}
         className="mr-2 rounded-sm"
       />
-      <p className="font-work-sans text-sm font-semibold">
+      <span className="font-work-sans text-sm font-semibold  text-teal-800">
         {originCountry.name}
-      </p>
-      <p className="font-work-sans text-sm font-semibold">
+      </span>
+      <span className="font-work-sans text-sm font-semibold text-teal-800">
         ({originCountry.currencySymbol})
-      </p>
+      </span>
+      <span className="font-work-sans text-sm font-semibold  text-teal-800">
+        {originCountry.currencyCode}
+      </span>
     </div>
   );
 };
