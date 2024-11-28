@@ -2,16 +2,29 @@ import InfoCard from "@/components/shared-components/info-card";
 import { SendReceiveCountryInfo } from "@/components/shared-components/send-receive-country-info";
 import { UserProfileCard } from "@/components/shared-components/user-profile-card";
 import { getCurrent } from "@/features/auth/actions";
+import {
+  getCustomerBeneficiaryCountry,
+  getCustomerOriginCountry,
+} from "@/features/customers/queries";
 import { TopRecipientsList } from "@/features/recipients/components/top-recipients-list";
 // Import create recipient form
 
 import { redirect } from "next/navigation";
 
 export default async function Home() {
+  const originCountry = await getCustomerOriginCountry();
+  const beneficiaryCountry = await getCustomerBeneficiaryCountry();
   const user = await getCurrent();
-  console.log({ user });
 
   if (!user) redirect("/sign-in");
+
+  if (!beneficiaryCountry) {
+    return null;
+  }
+
+  if (!originCountry) {
+    return null;
+  }
 
   const lastTransfer = {
     recipientName: "Kofi Setsoafia",
@@ -24,8 +37,9 @@ export default async function Home() {
   return (
     <>
       <section className="flex flex-col w-full gap-3 md:flex-row mb-10">
-        <UserProfileCard user={user} />
         <SendReceiveCountryInfo user={user} />
+        <UserProfileCard user={user} />
+
         {/* <UserProfileCard user={user} /> */}
       </section>
       <section className="flex flex-col w-full gap-3 md:flex-row">
@@ -36,7 +50,11 @@ export default async function Home() {
           transferAmount={lastTransfer.transferAmount}
           // transferDate={lastTransfer.transferDate}
         />
-        <InfoCard title="Current Exchange Rate" />
+        <InfoCard
+          title="Current Exchange Rate"
+          beneficiaryCountry={beneficiaryCountry}
+          originCountry={originCountry}
+        />
       </section>
       <section className="flex flex-col w-full gap-3 md:flex-row mt-10">
         <TopRecipientsList />

@@ -4,6 +4,8 @@ import { DottedSeparator } from "./dotted-separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { History, List, RepeatIcon, Send } from "lucide-react";
+import ExchangeRateCard from "./exchange-rate-card";
+import { Country } from "@/features/onboarding/types";
 
 interface InfoCardProps {
   title: string;
@@ -11,12 +13,16 @@ interface InfoCardProps {
   isTransferCard?: boolean;
   transferAmount?: string;
   transferDate?: Date;
+  beneficiaryCountry?: Country | undefined;
+  originCountry?: Country | undefined;
 }
 const InfoCard = ({
   title,
   recipientName,
   isTransferCard,
   transferAmount,
+  beneficiaryCountry,
+  originCountry,
 }: // transferDate,
 InfoCardProps) => {
   return (
@@ -91,6 +97,13 @@ InfoCardProps) => {
               </span>
             </p>
           </>
+        )}
+        {/* TODO PUT EXCHANGE RATE COMPONENT HERE */}
+        {!isTransferCard && (
+          <ExchangeRateCard
+            beneficiaryCountry={beneficiaryCountry}
+            originCountry={originCountry}
+          />
         )}
       </CardContent>
     </Card>

@@ -59,7 +59,7 @@ export const SendReceiveCountryInfo = async ({
           <div className="flex items-center">
             <MoveRight className="text-teal-600 size-4" />
           </div>
-          <div className="bg-teal-50 px-10 py-2 rounded-lg">
+          <div className="bg-teal-50 px-10 py-2 rounded-lg flex">
             <BeneficiaryCountrySwitcher
               beneficiaryCountry={beneficiaryCountry}
               beneficiaryCountries={beneficiaryCountries}
