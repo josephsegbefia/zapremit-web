@@ -45,6 +45,8 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
           Member since - {formatDate(user.$createdAt)}
         </p>
         <DottedSeparator className="mt-3 mb-5" />
+      </CardHeader>
+      <CardContent className="py-3">
         <div className="flex flex-row justify-evenly gap-2">
           <div className="bg-teal-50 px-10 py-2 rounded-lg">
             <p className="text-muted-foreground font-work-sans text-sm font-bold">
@@ -64,7 +66,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
             </p>
           </div>
         </div>
-      </CardHeader>
+      </CardContent>
     </Card>
   );
 };

@@ -3,6 +3,7 @@ import { z } from "zod";
 export const updateCustomerPersonalDetailsSchema = z.object({
   fullName: z.string().trim().min(1, "Full name is required"),
   email: z.string().trim().min(1, "Email is required").email(),
+  callingCode: z.string().trim(),
   phone: z.string().regex(/^\d{7,10}$/, {
     message: "Phone number must be between 7 and 10 digits.",
   }),
@@ -11,9 +12,9 @@ export const updateCustomerPersonalDetailsSchema = z.object({
     message: "Invalid postcode format.",
   }),
   city: z.string().min(1, { message: "City cannot be empty." }),
-  isIdentified: z.boolean().refine((val) => val === true, {
-    message: "Customer must pass KYC tests.",
-  }),
+  // isIdentified: z.boolean().refine((val) => val === true, {
+  //   message: "Customer must pass KYC tests.",
+  // }),
   dateOfBirth: z.string().refine(
     (date) => {
       const parsedDate = new Date(date);

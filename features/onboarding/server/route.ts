@@ -17,14 +17,14 @@ const app = new Hono()
       // const user = c.get("user");
 
       const { customerId } = c.req.param();
-      const { phone, street, postcode, city, dateOfBirth, isIdentified } =
+      const { phone, street, postcode, city, dateOfBirth, callingCode } =
         c.req.valid("json");
 
       const updatedCustomer = await databases.updateDocument(
         DATABASE_ID,
         CUSTOMERS_ID,
         customerId,
-        { phone, street, postcode, city, dateOfBirth, isIdentified }
+        { phone, street, postcode, city, dateOfBirth, callingCode }
       );
       return c.json({ data: updatedCustomer });
     }

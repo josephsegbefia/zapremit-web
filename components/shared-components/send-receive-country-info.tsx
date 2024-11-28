@@ -8,53 +8,62 @@ import { UserProfileCountrySwitcher } from "./user-profile-country-switcher";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { User } from "lucide-react";
+import Image from "next/image";
+import {
+  getCustomerBeneficiaryCountry,
+  getCustomerOriginCountry,
+} from "@/features/customers/queries";
+import BeneficiaryCountrySwitcher from "./beneficiary-country-switcher";
+import OriginCountryViewer from "./origin-country-viewer";
+import { getBeneficiaryCountries } from "@/features/onboarding/queries";
 
 interface SendReceiveCountryInfoProps {
   user: Models.User<Models.Preferences>;
 }
-export const SendReceiveCountryInfo = ({
+export const SendReceiveCountryInfo = async ({
   user,
 }: SendReceiveCountryInfoProps) => {
+  const originCountry = await getCustomerOriginCountry();
+  const beneficiaryCountry = await getCustomerBeneficiaryCountry();
+  const beneficiaryCountries = await getBeneficiaryCountries();
+
+  if (!originCountry) {
+    return null;
+  }
+
+  if (!beneficiaryCountry) {
+    return null;
+  }
+
   return (
-    <Card className="lg:w-1/3 h-full border-none shadow-none w-full">
+    <Card className="lg:w-2/3 h-full border-none shadow-none w-full">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
-          <Button
-            asChild
-            size="sm"
-            className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
-          >
-            {/* TODO => CHANGE THE HREF TO POINT TO THE APPROPRIATE PAGE */}
-            <Link href="/">
-              <User />
-              View Profile
-            </Link>
-          </Button>
+          Sending & Receiving Countries
         </CardTitle>
         <p className="text-muted-foreground text-sm font-work-sans">
-          Member since - {formatDate(user.$createdAt)}
+          Here you can change your receiving country. Contact support to change
+          sending country.
         </p>
         <DottedSeparator className="mt-3 mb-5" />
-        <div className="flex flex-row justify-evenly gap-2">
-          <div className="bg-teal-50 px-10 py-2 rounded-lg">
-            <p className="text-muted-foreground font-work-sans text-sm font-bold">
-              Points
-            </p>
-            <p className="text-teal-600 font-work-sans text-lg font-bold text-center">
-              0
-            </p>
+      </CardHeader>
+      <CardContent className="py-4">
+        <div className="flex flex-row gap-2">
+          <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
+            {/* <p className="text-muted-foreground font-work-sans text-sm font-bold">
+              Sending country
+            </p> */}
+            <OriginCountryViewer originCountry={originCountry} />
           </div>
 
           <div className="bg-teal-50 px-10 py-2 rounded-lg">
-            <p className="text-muted-foreground font-work-sans text-sm font-bold">
-              Balance
-            </p>
-            <p className="text-teal-600 font-work-sans text-lg font-bold text-center">
-              0
-            </p>
+            <BeneficiaryCountrySwitcher
+              beneficiaryCountry={beneficiaryCountry}
+              beneficiaryCountries={beneficiaryCountries}
+            />
           </div>
         </div>
-      </CardHeader>
+      </CardContent>
     </Card>
   );
 };

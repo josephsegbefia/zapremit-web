@@ -26,14 +26,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Models } from "node-appwrite";
 import DatePicker from "@/features/onboarding/components/date-picker";
+import { Country } from "@/features/onboarding/types";
 
 interface UpdateCustomerPersonalInfoFormProps {
   customer: Customer;
   user: Models.User<Models.Preferences>;
+  customerOriginCountry: Country;
 }
 const UpdateCustomerPersonalInfoForm = ({
   customer,
   user,
+  customerOriginCountry,
 }: UpdateCustomerPersonalInfoFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useUpdateCustomerPersonalInformation();
@@ -41,7 +44,14 @@ const UpdateCustomerPersonalInfoForm = ({
   const form = useForm<z.infer<typeof updateCustomerPersonalDetailsSchema>>({
     resolver: zodResolver(updateCustomerPersonalDetailsSchema),
     defaultValues: {
-      ...customer,
+      fullName: user.name,
+      email: user.email,
+      callingCode: customerOriginCountry.callingCode,
+      phone: "",
+      street: "",
+      postcode: "",
+      city: "",
+      dateOfBirth: "",
     },
   });
 
@@ -111,12 +121,16 @@ const UpdateCustomerPersonalInfoForm = ({
                 <div className="w-[30%]">
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="callingCode"
                     render={() => (
                       <FormItem>
                         <FormLabel>Calling Code</FormLabel>
                         <FormControl>
-                          <Input placeholder="Code" />
+                          <Input
+                            placeholder="Code"
+                            value={customerOriginCountry.callingCode}
+                            disabled={true}
+                          />
                         </FormControl>
                       </FormItem>
                     )}

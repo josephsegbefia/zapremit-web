@@ -43,9 +43,7 @@ const WelcomePage = async () => {
           asChild
           className="bg-teal-600 text-white font-work-sans hover:bg-white hover:text-teal-600 hover:border border-teal-600 w-[25%]"
         >
-          <Link href={`/onboarding/${customer?.$id}/personal-information`}>
-            Start
-          </Link>
+          <Link href={"/onboarding/customer-country-information"}>Start</Link>
         </Button>
       </CardContent>
     </Card>
