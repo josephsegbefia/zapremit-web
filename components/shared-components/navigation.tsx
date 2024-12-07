@@ -18,7 +18,7 @@ const routes = [
   },
   {
     label: "Recipients",
-    href: "/playgrpund/recipients",
+    href: "/playground/recipients",
     icon: UsersIcon,
     activeIcon: UsersIcon,
   },

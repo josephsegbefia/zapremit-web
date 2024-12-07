@@ -3,7 +3,7 @@ import { DottedSeparator } from "./dotted-separator";
 // import { formatDate } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { History, List, RepeatIcon, Send } from "lucide-react";
+import { History, RepeatIcon, Send } from "lucide-react";
 import ExchangeRateCard from "./exchange-rate-card";
 import { Country } from "@/features/onboarding/types";
 
@@ -15,6 +15,7 @@ interface InfoCardProps {
   transferDate?: Date;
   beneficiaryCountry?: Country | undefined;
   originCountry?: Country | undefined;
+  // loading?: boolean;
 }
 const InfoCard = ({
   title,
@@ -23,7 +24,8 @@ const InfoCard = ({
   transferAmount,
   beneficiaryCountry,
   originCountry,
-}: // transferDate,
+}: // loading,
+// transferDate,
 InfoCardProps) => {
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -103,6 +105,7 @@ InfoCardProps) => {
           <ExchangeRateCard
             beneficiaryCountry={beneficiaryCountry}
             originCountry={originCountry}
+            // loading={loading}
           />
         )}
       </CardContent>

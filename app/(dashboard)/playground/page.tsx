@@ -37,8 +37,8 @@ export default async function Home() {
   return (
     <>
       <section className="flex flex-col w-full gap-3 md:flex-row mb-10">
-        <SendReceiveCountryInfo user={user} />
         <UserProfileCard user={user} />
+        <SendReceiveCountryInfo user={user} />
 
         {/* <UserProfileCard user={user} /> */}
       </section>

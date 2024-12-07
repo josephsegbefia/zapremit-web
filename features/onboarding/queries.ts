@@ -1,7 +1,7 @@
 import { createSessionClient } from "@/lib/appwrite";
 import { Country } from "./types";
-import { COUNTRIES_ID, DATABASE_ID } from "@/config";
-import { Models, Query } from "node-appwrite";
+import { COUNTRIES_ID, CUSTOMERS_ID, DATABASE_ID } from "@/config";
+import { Query } from "node-appwrite";
 
 export const getOriginCountries = async () => {
   try {
@@ -65,4 +65,35 @@ export const getBeneficiaryCountries = async (): Promise<Country[] | null> => {
     console.log(error);
     return null;
   }
+};
+
+interface UpdateCustomerBeneficiaryCountryProps {
+  countryId: string;
+}
+
+export const updateCustomerBeneficiaryCountry = async ({
+  countryId,
+}: UpdateCustomerBeneficiaryCountryProps) => {
+  const { databases, account } = await createSessionClient();
+  const user = await account.get();
+
+  const customer = await databases.listDocuments(DATABASE_ID, CUSTOMERS_ID, [
+    Query.equal("accountId", user.$id),
+  ]);
+
+  if (customer.total === 0) {
+    return { documents: [], total: 0 };
+  }
+
+  const returnedCustomer = customer.documents[0];
+  const updatedCustomer = await databases.updateDocument(
+    DATABASE_ID,
+    CUSTOMERS_ID,
+    returnedCustomer.$id,
+    {
+      beneficiaryId: countryId,
+    }
+  );
+
+  return updatedCustomer;
 };

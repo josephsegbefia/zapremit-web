@@ -5,10 +5,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Country } from "@/features/onboarding/types";
 import Image from "next/image";
+import { useUpdateCustomerBeneficiaryCountry } from "@/features/customers/api/use-update-customer-beneficiary-country";
 
 interface BeneficiaryCountrySwitcherProps {
   beneficiaryCountry: Country;
@@ -21,20 +21,22 @@ const BeneficiaryCountrySwitcher = ({
   const [selectedCountry, setSelectedCountry] = useState(beneficiaryCountry);
   const [countries, setCountries] = useState<Country[]>([]);
 
+  const { mutate, isPending } = useUpdateCustomerBeneficiaryCountry();
+
   useEffect(() => {
     setCountries(beneficiaryCountries);
-  }, []);
+  }, [selectedCountry, beneficiaryCountries]);
 
   const onSelect = (value: string) => {
     const selected = countries.find((country) => country.name === value);
     if (selected) {
       setSelectedCountry(selected);
+      mutate({
+        json: { countryId: selected.$id },
+      });
     }
-
-    // TODO => Later provide an API call to change the customer's selected/chosen beneficiary country.
   };
 
-  console.log(beneficiaryCountry);
   return (
     <Select onValueChange={onSelect} value={selectedCountry.name}>
       <SelectTrigger className="w-full font-medium p-1 border-none shadow-none focus:ring-0 focus:outline-none">

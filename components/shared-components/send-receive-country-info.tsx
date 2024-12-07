@@ -1,14 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Models } from "node-appwrite";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { RecipientAvatar } from "@/features/recipients/components/recipients-avatar";
-import { formatDate } from "@/lib/utils";
 import { DottedSeparator } from "./dotted-separator";
-import { Separator } from "../ui/separator";
-import { UserProfileCountrySwitcher } from "./user-profile-country-switcher";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { MoveRight, User } from "lucide-react";
-import Image from "next/image";
+
+import { MoveRight } from "lucide-react";
+
 import {
   getCustomerBeneficiaryCountry,
   getCustomerOriginCountry,
@@ -41,7 +37,7 @@ export const SendReceiveCountryInfo = async ({
 
   return (
     <Card className="lg:w-2/3 h-full border-none shadow-none w-full">
-      <CardHeader className="flex px-7 py-3">
+      <CardHeader className="flex px-7 py-3 md:flex-col">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
           Sending & Receiving Countries
         </CardTitle>
@@ -51,12 +47,12 @@ export const SendReceiveCountryInfo = async ({
         </p>
         <DottedSeparator className="mt-3 mb-5" />
       </CardHeader>
-      <CardContent className="py-4">
-        <div className="flex flex-row gap-5">
+      <CardContent className="py-2">
+        <div className="flex lg:flex-row gap-5 flex-col justify-center">
           <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
             <OriginCountryViewer originCountry={originCountry} />
           </div>
-          <div className="flex items-center">
+          <div className="hidden sm:flex items-center">
             <MoveRight className="text-teal-600 size-4" />
           </div>
           <div className="bg-teal-50 px-10 py-2 rounded-lg flex">
