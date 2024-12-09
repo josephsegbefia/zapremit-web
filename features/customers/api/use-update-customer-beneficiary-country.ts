@@ -28,8 +28,8 @@ export const useUpdateCustomerBeneficiaryCountry = () => {
       return await response.json();
     },
     onSuccess: ({ data }) => {
-      router.refresh();
       toast.success("Beneficiary country updated");
+      router.refresh();
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       queryClient.invalidateQueries({ queryKey: ["customer", data.$id] });
     },

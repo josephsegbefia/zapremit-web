@@ -9,6 +9,8 @@ import {
 import { Country } from "@/features/onboarding/types";
 import Image from "next/image";
 import { useUpdateCustomerBeneficiaryCountry } from "@/features/customers/api/use-update-customer-beneficiary-country";
+import { useInvalidateBeneficiaryCountry } from "@/features/customers/hooks/use-invalidate-beneficiary-country";
+// import { useRouter } from "next/navigation";
 
 interface BeneficiaryCountrySwitcherProps {
   beneficiaryCountry: Country;
@@ -18,22 +20,30 @@ const BeneficiaryCountrySwitcher = ({
   beneficiaryCountry,
   beneficiaryCountries,
 }: BeneficiaryCountrySwitcherProps) => {
+  const { invalidateBeneficiaryCountry } = useInvalidateBeneficiaryCountry();
   const [selectedCountry, setSelectedCountry] = useState(beneficiaryCountry);
   const [countries, setCountries] = useState<Country[]>([]);
 
-  const { mutate, isPending } = useUpdateCustomerBeneficiaryCountry();
+  const { mutate } = useUpdateCustomerBeneficiaryCountry();
 
   useEffect(() => {
     setCountries(beneficiaryCountries);
-  }, [selectedCountry, beneficiaryCountries]);
+  }, []);
 
   const onSelect = (value: string) => {
     const selected = countries.find((country) => country.name === value);
     if (selected) {
       setSelectedCountry(selected);
-      mutate({
-        json: { countryId: selected.$id },
-      });
+      mutate(
+        {
+          json: { countryId: selected.$id },
+        },
+        {
+          onSuccess: () => {
+            invalidateBeneficiaryCountry();
+          },
+        }
+      );
     }
   };
 

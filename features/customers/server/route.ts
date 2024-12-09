@@ -1,11 +1,81 @@
-import { CUSTOMERS_ID, DATABASE_ID } from "@/config";
+import { COUNTRIES_ID, CUSTOMERS_ID, DATABASE_ID } from "@/config";
+import { Country } from "@/features/onboarding/types";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
+import { Customer } from "../types";
 
 const app = new Hono()
+  .get("/customer-origin-country", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const { documents } = await databases.listDocuments<Customer>(
+      DATABASE_ID,
+      CUSTOMERS_ID,
+      [Query.equal("accountId", user.$id)]
+    );
+
+    // if (documents.length === 0) {
+    //   return c.json({ error: "No destination countries found" });
+    // }
+
+    // Assuming there is only one customer document for the user
+    const customer = documents[0];
+
+    // Extract the required country ID based on the countryType parameter
+    const countryId = customer.originCountryId;
+
+    // if (!countryId) {
+    //   return c.json({ error: "No country found" });
+    // }
+
+    // Query the countries collection to get the country info
+    const countryDocument = await databases.getDocument<Country>(
+      DATABASE_ID,
+      COUNTRIES_ID,
+      countryId
+    );
+
+    return c.json({ data: countryDocument }); // Return the country document or null if not found
+  })
+  .get("/customer-beneficiary-country", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const { documents } = await databases.listDocuments<Customer>(
+      DATABASE_ID,
+      CUSTOMERS_ID,
+      [Query.equal("accountId", user.$id)]
+    );
+
+    // if (documents.length === 0) {
+    //   console.warn("No customer record found for the current user.");
+    //   return c.json({ error: "Empty country documents list" });
+    // }
+
+    // Assuming there is only one customer document for the user
+    const customer = documents[0];
+
+    // Extract the required country ID based on the countryType parameter
+    const countryId = customer.beneficiaryCountryId;
+
+    // if (!countryId) {
+    //   console.log("CountryId not found");
+    //   return c.json({ error: "No country with that Id found" });
+    // }
+
+    // Query the countries collection to get the country info
+    const countryDocument = await databases.getDocument<Country>(
+      DATABASE_ID,
+      COUNTRIES_ID,
+      countryId
+    );
+
+    return c.json({ data: countryDocument }); // R
+  })
   .post(
     "/create-customer-profile",
     zValidator(

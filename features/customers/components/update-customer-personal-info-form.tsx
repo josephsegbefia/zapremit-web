@@ -202,7 +202,7 @@ const UpdateCustomerPersonalInfoForm = ({
                   <FormField
                     control={form.control}
                     name="dateOfBirth"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel>Date of Birth</FormLabel>
                         <FormControl>
