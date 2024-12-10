@@ -3,13 +3,15 @@ import { handle } from "hono/vercel";
 import customers from "@/features/customers/server/route";
 import auth from "@/features/auth/server/route";
 import onboarding from "@/features/onboarding/server/route";
+import exchange from "@/features/exchange/server/route";
 
 const app = new Hono().basePath("/api");
 
 const routes = app
   .route("/auth", auth)
   .route("/customers", customers)
-  .route("/onboarding", onboarding);
+  .route("/onboarding", onboarding)
+  .route("/exchange", exchange);
 
 export const GET = handle(app);
 export const POST = handle(app);

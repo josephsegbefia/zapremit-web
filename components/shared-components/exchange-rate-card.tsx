@@ -27,7 +27,7 @@ const ExchangeRateCard = () => {
   }
 
   return (
-    <Card className="w-1/2 h-full border-none shadow-none">
+    <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify-between font-work-sans font-bold text-teal-600">
           Current Exchange Rate
@@ -35,6 +35,7 @@ const ExchangeRateCard = () => {
             asChild
             size="sm"
             className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
+            // disabled={true}
           >
             <Link href="/">
               <Send />

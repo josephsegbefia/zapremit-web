@@ -3,7 +3,7 @@ import { DottedSeparator } from "./dotted-separator";
 // import { formatDate } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { History, RepeatIcon, Send } from "lucide-react";
+import { History, RepeatIcon } from "lucide-react";
 // import ExchangeRateCard from "./exchange-rate-card";
 
 interface InfoCardProps {
@@ -19,7 +19,7 @@ const InfoCard = ({
   transferAmount,
 }: InfoCardProps) => {
   return (
-    <Card className="w-1/2 h-full border-none shadow-none">
+    <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify-between font-work-sans font-bold text-teal-600">
           {title}
@@ -72,15 +72,6 @@ const InfoCard = ({
             </span>
           </p>
         </>
-
-        {/* TODO PUT EXCHANGE RATE COMPONENT HERE */}
-        {/* {!isTransferCard && (
-           <ExchangeRateCard
-           beneficiaryCountry={beneficiaryCountry}
-          originCountry={originCountry}
-          loading={loading}
-          />
-        )} */}
       </CardContent>
     </Card>
   );
