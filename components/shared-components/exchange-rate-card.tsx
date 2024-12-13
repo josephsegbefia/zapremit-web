@@ -1,13 +1,20 @@
 "use client";
-import { ArrowRightLeft, Loader, Send } from "lucide-react";
+import { ArrowRightLeft, Loader, MoveRight, Send } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { DottedSeparator } from "./dotted-separator";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
+import { useGetExchangeRate } from "@/features/exchange/api/use-get-exchange-rate";
 
 const ExchangeRateCard = () => {
   const {
@@ -19,12 +26,24 @@ const ExchangeRateCard = () => {
   const { data: originCountry, isLoading: isLoadingOriginCountry } =
     useGetCustomerOriginCountry();
 
-  const isLoading = isLoadingBeneficiaryCountry || isLoadingOriginCountry;
+  const base = originCountry?.currencyCode || "EUR"; // Default fallback
+  const target = beneficiaryCountry?.currencyCode || "GHS"; // Default fallback
+
+  const {
+    data,
+    isLoading: isLoadingRate,
+    // error,
+  } = useGetExchangeRate({ base, target });
+
+  const isLoading =
+    isLoadingBeneficiaryCountry || isLoadingOriginCountry || isLoadingRate;
 
   // Return null if critical data is missing and not loading
   if (!isLoading && (!beneficiaryCountry || !originCountry)) {
     return null;
   }
+
+  console.log(data);
 
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -35,7 +54,6 @@ const ExchangeRateCard = () => {
             asChild
             size="sm"
             className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
-            // disabled={true}
           >
             <Link href="/">
               <Send />
@@ -67,12 +85,38 @@ const ExchangeRateCard = () => {
             />
             {isFetchingBeneficiaryCountry && (
               <div className="absolute top-0 right-0">
-                <Loader className="w-4 h-4 animate-spin text-teal-600" />
+                <Loader className="w-4 h-4 animate-spin text-teal-800" />
               </div>
             )}
           </div>
         )}
       </CardContent>
+      <DottedSeparator className="py-3 px-3" />
+      <CardFooter className="flex items-center justify-center mt-3">
+        {isLoading ? (
+          <>
+            <p className="font-semibold text-sm text-teal-800">
+              Loading exchange rate, please wait...
+            </p>
+          </>
+        ) : (
+          <div className="flex lg:flex-row gap-5 flex-col justify-center">
+            <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
+              <span className="font-work-sans text-sm font-semibold  text-teal-800">
+                1 {base}
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center">
+              <MoveRight className="text-teal-600 size-4" />
+            </div>
+            <div className="bg-teal-50 px-10 py-2 rounded-lg flex">
+              <span className="font-work-sans text-sm font-semibold  text-teal-800">
+                {data} {target}
+              </span>
+            </div>
+          </div>
+        )}
+      </CardFooter>
     </Card>
   );
 };

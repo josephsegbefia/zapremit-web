@@ -6,21 +6,33 @@ type ExchangeRateParams = {
   target: string;
 };
 
+type ExchangeRateResponse = {
+  conversion_rate?: number;
+  error?: string;
+};
+
 export const useGetExchangeRate = (params: ExchangeRateParams) => {
   const query = useQuery({
     queryKey: ["get-exchange-rate", params],
-    queryFn: async () => {
+    queryFn: async (): Promise<number> => {
       const response = await client.api.exchange["get-exchange-rate"][":base"][
         ":target"
-      ].$get({ param: params }); // Pass the 'params' object here
+      ].$get({ param: params });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch exchange rate");
+      // Parse the JSON response
+      const json: ExchangeRateResponse = await response.json();
+
+      // Handle error case
+      if (json.error) {
+        throw new Error(json.error);
       }
 
-      const data = await response.json();
+      // Return the conversion rate
+      if (json.conversion_rate !== undefined) {
+        return json.conversion_rate;
+      }
 
-      return data;
+      throw new Error("Unexpected response structure");
     },
   });
 
