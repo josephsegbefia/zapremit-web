@@ -8,6 +8,20 @@ import { z } from "zod";
 import { Customer } from "../types";
 
 const app = new Hono()
+  .get("/customer", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const customerList = await databases.listDocuments<Customer>(
+      DATABASE_ID,
+      CUSTOMERS_ID,
+      [Query.equal("accountId", user.$id)]
+    );
+
+    const customer = customerList.documents[0];
+
+    return c.json({ data: customer });
+  })
   .get("/customer-origin-country", sessionMiddleware, async (c) => {
     const databases = c.get("databases");
     const user = c.get("user");

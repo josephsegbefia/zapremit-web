@@ -18,16 +18,16 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { RiAddCircleFill } from "react-icons/ri";
+import { useGetCustomer } from "@/features/customers/api/use-get-customer";
+import { Loader } from "lucide-react";
 // import { Customer } from "@/features/customers/types";
 
 interface CreateRecipientFormProps {
   onCancel?: () => void;
 }
 
-export const CreateRecipientForm = ({
-  onCancel,
-}: // customer,
-CreateRecipientFormProps) => {
+export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
+  const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
   const form = useForm<z.infer<typeof createRecipientSchema>>({
     resolver: zodResolver(createRecipientSchema.omit({ customerId: true })),
     defaultValues: {
@@ -48,6 +48,8 @@ CreateRecipientFormProps) => {
     };
     // Add mutate function here to create the recipient
   };
+
+  console.log(customer);
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
@@ -59,122 +61,134 @@ CreateRecipientFormProps) => {
         <DottedSeparator />
       </div>
       <CardContent className="p-7">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Recipient Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter recipient's full name"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Recipient Email (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter recipient's email" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <div className="flex flex-row gap-3">
-                <div className="w-[30%]">
-                  <FormField
-                    control={form.control}
-                    name="callingCode"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Calling Code</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Country Code"
-                            // value={customerOriginCountry.callingCode}
-                            disabled={true}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+        {isLoadingCustomer ? (
+          <div className="flex flex-col justify-center items-center">
+            <Loader className="w-4 h-4 animate-spin text-teal-800" />
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recipient Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter recipient's full name"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recipient Email (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter recipient's email"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-row gap-3">
+                  <div className="w-[30%]">
+                    <FormField
+                      control={form.control}
+                      name="callingCode"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Calling Code</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Country Code"
+                              // value={customerOriginCountry.callingCode}
+                              disabled={true}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="w-[70%]">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter beneficiary phone number"
+                              {...field}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="w-[70%]">
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter beneficiary phone number"
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="street_address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Street Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter beneficiary street address"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter recipient's city"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </div>
-              <FormField
-                control={form.control}
-                name="street_address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter beneficiary street address"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter recipient's city" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DottedSeparator className="py-7" />
-            <div className="flex items-center justify-between">
-              <Button
-                type="button"
-                size="lg"
-                variant="destructive"
-                onClick={onCancel}
-                disabled={false}
-                className={cn(!onCancel && "invisible")}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" size="lg" disabled={false} variant="zap">
-                <span className="flex justify-center items-center">
-                  <RiAddCircleFill className="size-4 mr-2" />
-                  Add Recipient
-                </span>
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <DottedSeparator className="py-7" />
+              <div className="flex items-center justify-between">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="destructive"
+                  onClick={onCancel}
+                  disabled={false}
+                  className={cn(!onCancel && "invisible")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" size="lg" disabled={false} variant="zap">
+                  <span className="flex justify-center items-center">
+                    <RiAddCircleFill className="size-4 mr-2" />
+                    Add Recipient
+                  </span>
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
       </CardContent>
     </Card>
   );
