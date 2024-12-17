@@ -50,6 +50,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     const finalValues = {
       ...values,
       // Add customerId
+      customerId,
     };
     // Add mutate function here to create the recipient
   };
