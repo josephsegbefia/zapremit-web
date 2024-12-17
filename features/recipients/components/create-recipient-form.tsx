@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { RiAddCircleFill } from "react-icons/ri";
 import { useGetCustomer } from "@/features/customers/api/use-get-customer";
 import { Loader } from "lucide-react";
+import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 // import { Customer } from "@/features/customers/types";
 
 interface CreateRecipientFormProps {
@@ -28,6 +29,10 @@ interface CreateRecipientFormProps {
 
 export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
   const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
+  const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
+    useGetCustomerBeneficiaryCountry();
+  const customerId = customer?.$id;
+  const customerCallingCode = beneficiaryCountry?.callingCode;
   const form = useForm<z.infer<typeof createRecipientSchema>>({
     resolver: zodResolver(createRecipientSchema.omit({ customerId: true })),
     defaultValues: {
@@ -37,7 +42,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       street_address: "",
       city: "",
       send_transfer_update: false,
-      callingCode: "",
+      callingCode: customerCallingCode,
     },
   });
 
@@ -49,7 +54,9 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     // Add mutate function here to create the recipient
   };
 
-  console.log(customer);
+  const isLoading = isLoadingBeneficiaryCountry || isLoadingCustomer;
+
+  console.log("CUSTOMERID====>", customerId);
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
@@ -61,7 +68,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
         <DottedSeparator />
       </div>
       <CardContent className="p-7">
-        {isLoadingCustomer ? (
+        {isLoading ? (
           <div className="flex flex-col justify-center items-center">
             <Loader className="w-4 h-4 animate-spin text-teal-800" />
           </div>
@@ -110,7 +117,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           <FormControl>
                             <Input
                               placeholder="Country Code"
-                              // value={customerOriginCountry.callingCode}
+                              value={customerCallingCode}
                               disabled={true}
                             />
                           </FormControl>
