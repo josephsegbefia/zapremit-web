@@ -8,7 +8,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { createRecipientSchema } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,7 @@ import { RiAddCircleFill } from "react-icons/ri";
 import { useGetCustomer } from "@/features/customers/api/use-get-customer";
 import { Loader } from "lucide-react";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
+import { useCreateRecipient } from "../api/use-create-recipient";
 // import { Customer } from "@/features/customers/types";
 
 interface CreateRecipientFormProps {
@@ -28,10 +29,11 @@ interface CreateRecipientFormProps {
 }
 
 export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
+  const { mutate, isPending } = useCreateRecipient();
   const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
   const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
     useGetCustomerBeneficiaryCountry();
-  const customerId = customer?.$id;
+
   const customerCallingCode = beneficiaryCountry?.callingCode;
   const form = useForm<z.infer<typeof createRecipientSchema>>({
     resolver: zodResolver(createRecipientSchema.omit({ customerId: true })),
@@ -46,6 +48,11 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     },
   });
 
+  if (!customer) {
+    return null;
+  }
+
+  const customerId = customer.$id;
   const onSubmit = (values: z.infer<typeof createRecipientSchema>) => {
     const finalValues = {
       ...values,
@@ -53,6 +60,16 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       customerId,
     };
     // Add mutate function here to create the recipient
+    mutate(
+      {
+        json: finalValues,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+        },
+      }
+    );
   };
 
   const isLoading = isLoadingBeneficiaryCountry || isLoadingCustomer;
@@ -87,6 +104,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                         <Input
                           placeholder="Enter recipient's full name"
                           {...field}
+                          disabled={isPending}
                         />
                       </FormControl>
                     </FormItem>
@@ -102,6 +120,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                         <Input
                           placeholder="Enter recipient's email"
                           {...field}
+                          disabled={isPending}
                         />
                       </FormControl>
                     </FormItem>
@@ -137,6 +156,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                             <Input
                               placeholder="Enter beneficiary phone number"
                               {...field}
+                              disabled={isPending}
                             />
                           </FormControl>
                         </FormItem>
@@ -154,6 +174,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                         <Input
                           placeholder="Enter beneficiary street address"
                           {...field}
+                          disabled={isPending}
                         />
                       </FormControl>
                     </FormItem>
@@ -169,6 +190,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                         <Input
                           placeholder="Enter recipient's city"
                           {...field}
+                          disabled={isPending}
                         />
                       </FormControl>
                     </FormItem>
@@ -182,12 +204,17 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   size="lg"
                   variant="destructive"
                   onClick={onCancel}
-                  disabled={false}
+                  disabled={isPending}
                   className={cn(!onCancel && "invisible")}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" size="lg" disabled={false} variant="zap">
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isPending}
+                  variant="zap"
+                >
                   <span className="flex justify-center items-center">
                     <RiAddCircleFill className="size-4 mr-2" />
                     Add Recipient
