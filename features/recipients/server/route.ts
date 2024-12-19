@@ -3,7 +3,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { createRecipientSchema } from "../schemas";
 import { DATABASE_ID, RECIPIENTS_ID } from "@/config";
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
+import { Recipient } from "../types";
 
 const app = new Hono().post(
   "/recipients",
@@ -21,24 +22,46 @@ const app = new Hono().post(
       city,
       callingCode,
       phone,
+      country,
     } = c.req.valid("json");
 
-    const recipient = await databases.createDocument(
-      DATABASE_ID,
-      RECIPIENTS_ID,
-      ID.unique(),
-      {
-        customerId,
-        name,
-        email,
-        street_address,
-        city,
-        callingCode,
-        phone,
-      }
-    );
+    try {
+      const foundExistingRecipient = await databases.listDocuments<Recipient>(
+        DATABASE_ID,
+        RECIPIENTS_ID,
+        [Query.equal("phone", phone)]
+      );
 
-    return c.json({ data: recipient });
+      if (foundExistingRecipient.documents[0]) {
+        return c.json(
+          {
+            error: "A recipient with the same number already exists",
+          },
+          409
+        );
+      }
+
+      const recipient = await databases.createDocument(
+        DATABASE_ID,
+        RECIPIENTS_ID,
+        ID.unique(),
+        {
+          customerId,
+          name,
+          email,
+          street_address,
+          city,
+          callingCode,
+          phone,
+          country,
+        }
+      );
+
+      return c.json({ data: recipient });
+    } catch (error) {
+      console.error("Error creating recipient:", error);
+      return c.json({ error: "Internal server error" }, 500);
+    }
   }
 );
 

@@ -14,14 +14,20 @@ type RequestType = InferRequestType<
 
 export const useCreateRecipient = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<ResponseType, Error, RequestType>({
+
+  const mutation = useMutation<ResponseType, { message: string }, RequestType>({
     mutationFn: async ({ json }) => {
       const response = await client.api.recipients["recipients"]["$post"]({
         json,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create customer profile. Contact support");
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error(
+          // errorData.error || "Failed to create recipient. Contact support"
+          "Failed to create recipient. Contact support"
+        );
       }
       return await response.json();
     },
@@ -29,8 +35,8 @@ export const useCreateRecipient = () => {
       toast.success("Recipient created");
       queryClient.invalidateQueries({ queryKey: ["recipients"] });
     },
-    onError: () => {
-      toast.error("Failed to create recipient, please contact support");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

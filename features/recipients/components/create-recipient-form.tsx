@@ -35,6 +35,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     useGetCustomerBeneficiaryCountry();
 
   const customerCallingCode = beneficiaryCountry?.callingCode;
+  const beneficiaryCountryName = beneficiaryCountry?.name;
   const form = useForm<z.infer<typeof createRecipientSchema>>({
     resolver: zodResolver(createRecipientSchema.omit({ customerId: true })),
     defaultValues: {
@@ -45,6 +46,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       city: "",
       send_transfer_update: false,
       callingCode: customerCallingCode,
+      country: beneficiaryCountryName,
     },
   });
 
@@ -74,7 +76,6 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
 
   const isLoading = isLoadingBeneficiaryCountry || isLoadingCustomer;
 
-  console.log("CUSTOMERID====>", customerId);
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
