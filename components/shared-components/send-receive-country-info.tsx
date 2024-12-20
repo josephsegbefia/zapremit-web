@@ -36,7 +36,7 @@ export const SendReceiveCountryInfo = async ({
   }
 
   return (
-    <Card className="lg:w-2/3 h-full border-none shadow-none w-full">
+    <Card className="lg:w-1/2 sm:h-[200px] md:h-[300px] lg:h-[200px] border-none shadow-none">
       <CardHeader className="flex px-7 py-3 md:flex-col">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
           Sending & Receiving Countries
@@ -52,7 +52,7 @@ export const SendReceiveCountryInfo = async ({
           <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
             <OriginCountryViewer originCountry={originCountry} />
           </div>
-          <div className="hidden sm:flex items-center">
+          <div className="hidden lg:flex items-center">
             <MoveRight className="text-teal-600 size-4" />
           </div>
           <div className="bg-teal-50 px-10 py-2 rounded-lg flex">

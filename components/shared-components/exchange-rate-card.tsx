@@ -40,13 +40,14 @@ const ExchangeRateCard = () => {
 
   // Return null if critical data is missing and not loading
   if (!isLoading && (!beneficiaryCountry || !originCountry)) {
+    // Make this return a card with like below with the information showing no country information found
     return null;
   }
 
   console.log(data);
 
   return (
-    <Card className="w-full h-full border-none shadow-none">
+    <Card className="w-full lg:w-2/3 sm:h-[300px] md:h-[300px] lg:h-[300px] border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify-between font-work-sans font-bold text-teal-600">
           Current Exchange Rate
@@ -63,7 +64,7 @@ const ExchangeRateCard = () => {
         </CardTitle>
         <DottedSeparator className="mt-4" />
       </CardHeader>
-      <CardContent className="px-7 py-3 flex justify-center items-center">
+      <CardContent className="px-4 py-3 flex justify-center items-center">
         {isLoading ? (
           <Loader className="w-6 h-6 animate-spin text-teal-800" />
         ) : (
@@ -100,13 +101,13 @@ const ExchangeRateCard = () => {
             </p>
           </>
         ) : (
-          <div className="flex lg:flex-row gap-5 flex-col justify-center">
+          <div className="flex md:flex-row gap-5 flex-col justify-center">
             <div className="bg-teal-50 px-10 py-2 rounded-lg flex items-center">
               <span className="font-work-sans text-sm font-semibold  text-teal-800">
                 1 {base}
               </span>
             </div>
-            <div className="hidden sm:flex items-center">
+            <div className="hidden lg:flex items-center">
               <MoveRight className="text-teal-600 size-4" />
             </div>
             <div className="bg-teal-50 px-10 py-2 rounded-lg flex">

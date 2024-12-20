@@ -48,7 +48,7 @@ export default async function Home() {
 
         {/* <UserProfileCard user={user} /> */}
       </section>
-      <section className="flex flex-col w-full gap-3 md:flex-row">
+      <section className="flex flex-col w-full gap-3 md:flex-row mt-10">
         <InfoCard
           title="Latest Transfer"
           recipientName={lastTransfer.recipientName}

@@ -19,7 +19,7 @@ const InfoCard = ({
   transferAmount,
 }: InfoCardProps) => {
   return (
-    <Card className="w-full h-full border-none shadow-none">
+    <Card className="w-full lg:w-2/3 sm:h-[300px] md:h-[300px] lg:h-[300px] border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify-between font-work-sans font-bold text-teal-600">
           {title}

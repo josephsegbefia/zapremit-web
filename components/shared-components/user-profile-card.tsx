@@ -3,8 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { RecipientAvatar } from "@/features/recipients/components/recipients-avatar";
 import { formatDate } from "@/lib/utils";
 import { DottedSeparator } from "./dotted-separator";
-import { Separator } from "../ui/separator";
-import { UserProfileCountrySwitcher } from "./user-profile-country-switcher";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { User } from "lucide-react";
@@ -17,7 +15,7 @@ export const UserProfileCard = ({ user }: UserProfileCardProps) => {
   const firstName = splitName[0];
   const lastName = splitName[1];
   return (
-    <Card className="lg:w-1/3 h-full border-none shadow-none w-full">
+    <Card className="lg:w-1/2 sm:h-[200px] md:h-[300px] lg:h-[200px] border-none shadow-none w-full">
       <CardHeader className="flex px-7 py-3">
         <CardTitle className="text-xl flex justify justify-between font-work-sans font-bold text-teal-600 items-center">
           <div className="flex items-center">

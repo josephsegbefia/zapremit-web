@@ -1,6 +1,8 @@
 "use client";
+import { DottedSeparator } from "@/components/shared-components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { useCreateRecipientModal } from "@/features/recipients/hooks/use-create-recipient-modal";
+import { UsersIcon } from "lucide-react";
 import { RiAddCircleFill } from "react-icons/ri";
 
 const RecipientsPage = () => {
@@ -8,7 +10,12 @@ const RecipientsPage = () => {
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between">
-        Something here, dont know yet
+        <p className="font-work-sans text-teal-800 text-md font-semibold">
+          <span className="flex justify-center items-center gap-3">
+            <UsersIcon />
+            Recipients
+          </span>
+        </p>
         <div>
           <Button
             size="sm"
@@ -22,6 +29,7 @@ const RecipientsPage = () => {
           </Button>
         </div>
       </div>
+      <DottedSeparator />
     </div>
   );
 };
