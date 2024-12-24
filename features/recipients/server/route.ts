@@ -2,10 +2,9 @@ import { sessionMiddleware } from "@/lib/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { createRecipientSchema } from "../schemas";
-import { CUSTOMERS_ID, DATABASE_ID, RECIPIENTS_ID } from "@/config";
+import { DATABASE_ID, RECIPIENTS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { Recipient } from "../types";
-import { z } from "zod";
 
 const app = new Hono()
   .post(
@@ -14,7 +13,7 @@ const app = new Hono()
     sessionMiddleware,
     async (c) => {
       const databases = c.get("databases");
-      // const user = c.get("user");
+      const user = c.get("user");
 
       const {
         customerId,
@@ -56,6 +55,7 @@ const app = new Hono()
             callingCode,
             phone,
             country,
+            userId: user.$id,
           }
         );
 
@@ -67,26 +67,26 @@ const app = new Hono()
     }
   )
   .get(
-    "/recipients",
+    "/",
     sessionMiddleware,
-    zValidator("query", z.object({ customerId: z.string() })),
+    // zValidator("query", z.object({ customerId: z.string() })),
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
 
-      const { customerId } = c.req.valid("query");
+      const userId = user.$id;
 
-      if (!customerId) {
-        return c.json({ error: "Missing customer Id" }, 400);
+      if (!userId) {
+        return c.json({ error: "Missing user Id" }, 400);
       }
 
-      const customers = await databases.listDocuments(
+      const recipients = await databases.listDocuments(
         DATABASE_ID,
-        CUSTOMERS_ID,
-        [Query.equal("customerId", customerId), Query.orderDesc("$createdAt")]
+        RECIPIENTS_ID,
+        [Query.equal("userId", userId), Query.orderDesc("$createdAt")]
       );
 
-      return c.json({ data: customers });
+      return c.json({ data: recipients });
     }
   );
 

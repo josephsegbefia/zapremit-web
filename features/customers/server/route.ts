@@ -19,6 +19,7 @@ const app = new Hono()
     );
 
     const customer = customerList.documents[0];
+    // const accountId = customer.accountId;
 
     return c.json({ data: customer });
   })
