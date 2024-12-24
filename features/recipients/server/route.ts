@@ -88,6 +88,25 @@ const app = new Hono()
 
       return c.json({ data: recipients });
     }
-  );
+  )
+  .delete("/:recipientId", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    // const user = c.get("user");
+
+    const { recipientId } = c.req.param();
+
+    const existingRecipient = await databases.getDocument<Recipient>(
+      DATABASE_ID,
+      RECIPIENTS_ID,
+      recipientId
+    );
+
+    if (!existingRecipient) {
+      return c.json({ error: "Recipient not found" }, 404);
+    }
+
+    await databases.deleteDocument(DATABASE_ID, RECIPIENTS_ID, recipientId);
+    return c.json({ data: { $id: existingRecipient.$id } });
+  });
 
 export default app;
