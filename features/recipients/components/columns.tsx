@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 // import { Badge } from "@/components/ui/badge";
 import { Recipient } from "../types";
 import { formatDate } from "@/lib/utils";
+import { RecipientActions } from "./recipient-actions";
 
 export const columns: ColumnDef<Recipient>[] = [
   {
@@ -81,6 +82,20 @@ export const columns: ColumnDef<Recipient>[] = [
       const addedon = row.original.$createdAt;
       const date = formatDate(addedon);
       return <p className="line-clamp-1 font-work-sans">{date}</p>;
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const id = row.original.$id;
+
+      return (
+        <RecipientActions id={id} recipientId={id}>
+          <Button variant="ghost" className="size-8 p-0">
+            <MoreVertical className="size-4" />
+          </Button>
+        </RecipientActions>
+      );
     },
   },
 ];

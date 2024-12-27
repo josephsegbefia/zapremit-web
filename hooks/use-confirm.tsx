@@ -47,7 +47,7 @@ export const useConfirm = (
             <CardTitle>{title}</CardTitle>
             <CardDescription>{message}</CardDescription>
           </CardHeader>
-          <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gap-x-2 items-center justify-end">
+          <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gap-x-4 items-center justify-end">
             <Button
               onClick={handleCancel}
               variant="outline"
@@ -60,7 +60,7 @@ export const useConfirm = (
               variant={variant}
               className="w-full lg:w-auto"
             >
-              Confirm
+              Delete
             </Button>
           </div>
         </CardContent>
