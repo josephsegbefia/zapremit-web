@@ -4,20 +4,18 @@ import { toast } from "sonner";
 import { client } from "@/lib/rpc";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.recipients)["recipients"]["$post"],
+  (typeof client.api.recipients)["$post"],
   200
 >;
 
-type RequestType = InferRequestType<
-  (typeof client.api.recipients)["recipients"]["$post"]
->;
+type RequestType = InferRequestType<(typeof client.api.recipients)["$post"]>;
 
 export const useCreateRecipient = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<ResponseType, { message: string }, RequestType>({
     mutationFn: async ({ json }) => {
-      const response = await client.api.recipients["recipients"]["$post"]({
+      const response = await client.api.recipients["$post"]({
         json,
       });
 

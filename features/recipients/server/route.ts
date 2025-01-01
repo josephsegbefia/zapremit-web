@@ -1,14 +1,14 @@
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { createRecipientSchema } from "../schemas";
+import { createRecipientSchema, updateRecipientSchema } from "../schemas";
 import { DATABASE_ID, RECIPIENTS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { Recipient } from "../types";
 
 const app = new Hono()
   .post(
-    "/recipients",
+    "/",
     zValidator("json", createRecipientSchema),
     sessionMiddleware,
     async (c) => {
@@ -87,6 +87,16 @@ const app = new Hono()
       );
 
       return c.json({ data: recipients });
+    }
+  )
+  .patch(
+    ":/recipientId",
+    sessionMiddleware,
+    zValidator("json", updateRecipientSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const storage = c.get("storage");
+      const user = c.get("user");
     }
   )
   .delete("/:recipientId", sessionMiddleware, async (c) => {

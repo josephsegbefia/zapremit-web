@@ -51,7 +51,7 @@ export const RecipientActions = ({
           <DropdownMenuItem
             onClick={onViewRecipientPage}
             disabled={isPending}
-            className="font-medium p-[10px] text-teal-800 hover:bg-white hover:text-teal-800"
+            className="font-medium p-[10px] text-teal-800 hover:bg-white hover:text-teal-800 font-work-sans"
           >
             <Send className="size-4 mr-2 stroke-2 text-teal-800" />
             Send Money

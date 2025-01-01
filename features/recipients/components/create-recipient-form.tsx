@@ -7,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 // import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -55,26 +56,45 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
   }
 
   const customerId = customer.$id;
-  const onSubmit = (values: z.infer<typeof createRecipientSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof createRecipientSchema>) => {
     const finalValues = {
       ...values,
-      // Add customerId
       customerId,
     };
-    // Add mutate function here to create the recipient
+
+    console.log("Submitting values:", finalValues);
+
     mutate(
-      {
-        json: finalValues,
-      },
+      { json: finalValues },
       {
         onSuccess: () => {
+          console.log("Recipient created successfully");
           form.reset();
+        },
+        onError: (error) => {
+          console.error("Error creating recipient:", error);
         },
       }
     );
   };
 
   const isLoading = isLoadingBeneficiaryCountry || isLoadingCustomer;
+
+  if (!customer || !beneficiaryCountry) {
+    return (
+      <Card className="w-full h-full border-none shadow-none">
+        <CardHeader className="flex p-7">
+          <CardTitle className="text-xl font-bold font-work-sans text-teal-800">
+            Error
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-7">
+          <p>There was an error fetching important data</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full h-full border-none shadow-none">
@@ -108,6 +128,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           disabled={isPending}
                         />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -160,6 +181,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                               disabled={isPending}
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
