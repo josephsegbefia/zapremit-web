@@ -22,7 +22,7 @@ export const updateRecipientSchema = z.object({
     .trim()
     .regex(/^\+?[1-9]\d{1, 14}$/, "Invalid phone number")
     .optional(),
-  customerId: z.string(),
+  // customerId: z.string(),
   email: z.string().trim().email().optional(),
   street_address: z.string().trim().optional(),
   city: z.string().trim().optional(),

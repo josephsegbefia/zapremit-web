@@ -90,13 +90,32 @@ const app = new Hono()
     }
   )
   .patch(
-    ":/recipientId",
+    "/:recipientId",
     sessionMiddleware,
     zValidator("json", updateRecipientSchema),
     async (c) => {
       const databases = c.get("databases");
       const storage = c.get("storage");
       const user = c.get("user");
+
+      const { recipientId } = c.req.param();
+
+      const { name, email, street_address, city, callingCode, phone, country } =
+        c.req.valid("json");
+
+      // const getRecipientToUpdate = await databases.getDocument<Recipient>(
+      //   DATABASE_ID,
+      //   RECIPIENTS_ID,
+      //   recipientId
+      // );
+      const recipient = await databases.updateDocument(
+        DATABASE_ID,
+        RECIPIENTS_ID,
+        recipientId,
+        { name, email, street_address, city, callingCode, phone, country }
+      );
+
+      return c.json({ data: recipient });
     }
   )
   .delete("/:recipientId", sessionMiddleware, async (c) => {
