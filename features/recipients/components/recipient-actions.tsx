@@ -9,6 +9,7 @@ import { ExternalLinkIcon, PencilIcon, Send, TrashIcon } from "lucide-react";
 import { useDeleteRecipient } from "../api/use-delete-recipient";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRouter } from "next/navigation";
+import { useUpdateRecipientModal } from "../hooks/use-update-recipient-modal";
 
 interface RecipientActionsProps {
   id: string;
@@ -21,6 +22,7 @@ export const RecipientActions = ({
   recipientId,
   children,
 }: RecipientActionsProps) => {
+  const { open } = useUpdateRecipientModal();
   const router = useRouter();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete Recipeint",
@@ -66,7 +68,7 @@ export const RecipientActions = ({
             View Recipient
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={onViewRecipientPage}
+            onClick={() => open(recipientId)}
             disabled={isPending}
             className="font-medium p-[10px] text-teal-800"
           >
