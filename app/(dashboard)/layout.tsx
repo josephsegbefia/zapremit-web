@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/shared-components/navbar";
 import { Sidebar } from "@/components/shared-components/sidebar";
 import { CreateRecipientModal } from "@/features/recipients/components/create-recipient-modal";
-import { UpdateRecipientForm } from "@/features/recipients/components/update-recipient-form";
 import { UpdateRecipientModal } from "@/features/recipients/components/update-recipient-modal";
 
 interface DashboardLayoutProps {

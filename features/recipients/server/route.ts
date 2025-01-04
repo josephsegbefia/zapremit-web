@@ -89,14 +89,32 @@ const app = new Hono()
       return c.json({ data: recipients });
     }
   )
+  .get("recipients/:recipientId", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+
+    const { recipientId } = c.req.param();
+    console.log("Extracted Recipient ID:", recipientId);
+
+    try {
+      // Use the getDocument method with $id directly
+      const recipient = await databases.getDocument(
+        DATABASE_ID,
+        RECIPIENTS_ID,
+        recipientId
+      );
+      console.log("Fetched Recipient:", recipient);
+      return c.json({ data: recipient });
+    } catch (error) {
+      console.error("Error Fetching Recipient:", error);
+      return c.json({ error: "Recipient not found or invalid ID" }, 404);
+    }
+  })
   .patch(
     "/:recipientId",
     sessionMiddleware,
     zValidator("json", updateRecipientSchema),
     async (c) => {
       const databases = c.get("databases");
-      const storage = c.get("storage");
-      const user = c.get("user");
 
       const { recipientId } = c.req.param();
 

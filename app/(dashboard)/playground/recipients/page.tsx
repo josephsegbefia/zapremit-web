@@ -1,14 +1,20 @@
 "use client";
 import { DottedSeparator } from "@/components/shared-components/dotted-separator";
 import { Button } from "@/components/ui/button";
+import { useCurrent } from "@/features/auth/api/use-current";
 import { useGetRecipients } from "@/features/recipients/api/use-get-recipients";
 import { columns } from "@/features/recipients/components/columns";
 import { RecipientDataTable } from "@/features/recipients/components/recipient-data-table";
 import { useCreateRecipientModal } from "@/features/recipients/hooks/use-create-recipient-modal";
 import { Loader, UsersIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 import { RiAddCircleFill } from "react-icons/ri";
 
 const RecipientsPage = () => {
+  const user = useCurrent();
+
+  if (!user) redirect("/sign-in");
+
   const { open } = useCreateRecipientModal();
   const { data: recipients, isLoading } = useGetRecipients();
 

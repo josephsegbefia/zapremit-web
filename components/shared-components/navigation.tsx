@@ -52,7 +52,7 @@ export const Navigation = () => {
                 className={cn(
                   "flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-teal-900 cursor-pointer transition text-white",
                   isActive &&
-                    "bg-white shadow-sm hover:opacity-100 text-teal-600 hover:text-teal-900"
+                    "bg-white shadow-sm hover:opacity-100 text-teal-600 hover:text-teal-600"
                 )}
               >
                 {isActive ? (
