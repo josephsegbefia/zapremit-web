@@ -89,11 +89,10 @@ const app = new Hono()
       return c.json({ data: recipients });
     }
   )
-  .get("recipients/:recipientId", sessionMiddleware, async (c) => {
+  .get("/:recipientId", sessionMiddleware, async (c) => {
     const databases = c.get("databases");
 
     const { recipientId } = c.req.param();
-    console.log("Extracted Recipient ID:", recipientId);
 
     try {
       // Use the getDocument method with $id directly
@@ -102,7 +101,7 @@ const app = new Hono()
         RECIPIENTS_ID,
         recipientId
       );
-      console.log("Fetched Recipient:", recipient);
+
       return c.json({ data: recipient });
     } catch (error) {
       console.error("Error Fetching Recipient:", error);

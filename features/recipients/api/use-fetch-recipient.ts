@@ -9,9 +9,9 @@ export const useFetchRecipient = (recipientId: string) => {
         throw new Error("Recipient ID is required");
       }
 
-      const response = await client.api.recipients.recipients[
-        ":recipientId"
-      ].$get({ param: { recipientId: recipientId } });
+      const response = await client.api.recipients[":recipientId"].$get({
+        param: { recipientId: recipientId },
+      });
       // path: `/${recipientId}`, // Append the recipientId to t);
 
       if (!response.ok) {
