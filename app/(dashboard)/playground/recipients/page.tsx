@@ -30,7 +30,7 @@ const RecipientsPage = () => {
         <div>
           <Button
             size="sm"
-            className="bg-teal-800 text-white font-work-sans hover:bg-white hover:text-teal-800"
+            className="bg-teal-600 text-white font-work-sans hover:bg-white hover:text-teal-800"
             onClick={open}
           >
             <span className="flex">

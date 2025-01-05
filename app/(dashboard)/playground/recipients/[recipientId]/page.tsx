@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchRecipient } from "@/features/recipients/api/use-fetch-recipient";
 import { ArrowLeftIcon, Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ViewRecipientIdPageProps {
   params: {
@@ -13,6 +14,7 @@ interface ViewRecipientIdPageProps {
 }
 
 const ViewRecipientIdPage = ({ params }: ViewRecipientIdPageProps) => {
+  const router = useRouter();
   const recipientId = params.recipientId;
   const { data, isLoading } = useFetchRecipient(recipientId);
 
@@ -33,7 +35,14 @@ const ViewRecipientIdPage = ({ params }: ViewRecipientIdPageProps) => {
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex flex-row items-center gap-x-[100px] p-7 space-y-0">
-        <Button size="sm" variant="secondary" onClick={() => {}}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            router.push(`/playground/recipients`);
+          }}
+          className="font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer bg-teal-600"
+        >
           <ArrowLeftIcon className="size-4 mr-2" />
           Back
         </Button>
