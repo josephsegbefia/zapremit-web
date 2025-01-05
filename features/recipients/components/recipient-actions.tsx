@@ -40,7 +40,7 @@ export const RecipientActions = ({
   };
 
   const onViewRecipientPage = () => {
-    router.push(`/dashboard/playground/recipients/${recipientId}`);
+    router.push(`/playground/recipients/${recipientId}`);
   };
 
   return (

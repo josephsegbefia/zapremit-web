@@ -12,7 +12,6 @@ export const useFetchRecipient = (recipientId: string) => {
       const response = await client.api.recipients[":recipientId"].$get({
         param: { recipientId: recipientId },
       });
-      // path: `/${recipientId}`, // Append the recipientId to t);
 
       if (!response.ok) {
         throw new Error("Failed to fetch recipient");
@@ -22,7 +21,7 @@ export const useFetchRecipient = (recipientId: string) => {
 
       return data;
     },
-    enabled: !!recipientId, // Ensure the query only runs if recipientId is provided
+    enabled: !!recipientId,
   });
 
   return query;
