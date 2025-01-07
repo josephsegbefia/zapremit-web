@@ -12,3 +12,13 @@ export function formatDate(date: string) {
     year: "numeric",
   });
 }
+
+export function calcRateAdjustment(rate: string, percent: number) {
+  const rateFloat = parseFloat(rate);
+  // const percentFloat = parseFloat(percent);
+
+  const percentAdjustment = rateFloat * percent;
+  return rateFloat - percentAdjustment;
+}
+
+export function calcTransferProfit() {}

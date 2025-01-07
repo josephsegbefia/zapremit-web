@@ -10,6 +10,8 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
 import { ExchangeRate } from "../types";
+import { calcRateAdjustment } from "@/lib/utils";
+import { getRateAdjustment } from "@/features/transfers/queries";
 
 const app = new Hono().get(
   "/get-exchange-rate/:base/:target",
@@ -42,7 +44,7 @@ const app = new Hono().get(
         if (new Date(rate.expires_at) > now) {
           if (!rate.is_locked) {
             // If not locked and not expired, return the rate
-            return c.json({ conversion_rate: parseFloat(rate.rate) });
+            return c.json({ conversion_rate: parseFloat(rate.adjRate) });
           } else {
             // If locked, return a message
             return c.json({
@@ -74,6 +76,17 @@ const app = new Hono().get(
       const apiData = await response.json();
       const newRate = apiData.conversion_rate;
 
+      c; // Await the rate adjustment
+      const rateAdjPercent = await getRateAdjustment();
+
+      // Handle the case where "Not found" is returned
+      if (rateAdjPercent === "Not found") {
+        throw new Error("Rate adjustment not found");
+      }
+
+      const adjustedRate = calcRateAdjustment(newRate, rateAdjPercent);
+      const roundedAdjustedRate = Number(adjustedRate.toFixed(2));
+
       // Step 5: Update or insert new rate in the database
       const expiryTime = new Date();
       expiryTime.setHours(expiryTime.getHours() + 2);
@@ -85,6 +98,7 @@ const app = new Hono().get(
           storedRate.documents[0].$id,
           {
             rate: newRate.toString(),
+            adjrate: roundedAdjustedRate.toString(), // Added later
             expires_at: expiryTime.toISOString(),
             is_locked: false,
           }
@@ -98,6 +112,7 @@ const app = new Hono().get(
           {
             key: exchange_key,
             rate: newRate.toString(),
+            adjRate: roundedAdjustedRate.toString(), // Added later
             expires_at: expiryTime.toISOString(),
             is_locked: false,
           }

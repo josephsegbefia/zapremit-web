@@ -10,7 +10,6 @@ export const createTransferSchema = z.object({
   originCurrency: z.string().trim().min(1, "Required"),
   exchangeRate: z.string(),
   receivedAmount: z.string().trim(),
-  fee: z.string(),
   profit: z.string(),
 });
 
