@@ -57,7 +57,7 @@ const ViewRecipientIdPage = ({ params }: ViewRecipientIdPageProps) => {
         <p className="text-teal-800 font-work-sans font-semibold px-3 pb-4">
           Transfers
         </p>
-        <TransferStatusViewSwitcher />
+        <TransferStatusViewSwitcher isRecipientDetailsPage={true} />
       </CardContent>
     </Card>
   );

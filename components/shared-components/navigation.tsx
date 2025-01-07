@@ -1,6 +1,6 @@
 "use client";
 import { GoHome, GoHomeFill } from "react-icons/go";
-import { RiExchangeLine, RiExchangeFill } from "react-icons/ri";
+import { RiExchange2Fill, RiExchange2Line } from "react-icons/ri";
 import { TbSettingsFilled, TbSettings } from "react-icons/tb";
 import { FaCreditCard, FaRegCreditCard } from "react-icons/fa";
 import { UsersIcon } from "lucide-react";
@@ -13,8 +13,8 @@ const routes = [
   {
     label: "Transfers",
     href: "/playground/transfers",
-    icon: RiExchangeLine,
-    activeIcon: RiExchangeFill,
+    icon: RiExchange2Line,
+    activeIcon: RiExchange2Fill,
   },
   {
     label: "Recipients",
