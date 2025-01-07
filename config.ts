@@ -10,3 +10,6 @@ export const CONVERTER_BASE_URL =
   process.env.NEXT_PUBLIC_EXCHANGE_RATE_BASE_URL!;
 export const EXCHANGE_RATES_ID = process.env.NEXT_PUBLIC_EXCHANGE_RATES_ID!;
 export const RECIPIENTS_ID = process.env.NEXT_PUBLIC_RECIPIENTS_ID!;
+export const TRANSFERS_ID = process.env.NEXT_PUBLIC_TRANSFERS_ID!;
+export const FEES_AND_PROMOTIONS_ID =
+  process.env.NEXT_PUBLIC_FEES_AND_PROMOTIONS_ID!;
