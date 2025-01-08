@@ -21,4 +21,9 @@ export function calcRateAdjustment(rate: string, percent: number) {
   return rateFloat - percentAdjustment;
 }
 
-export function calcTransferProfit() {}
+export function calcRateDifference(actualRate: string, adjustedRate: string) {
+  const actualRateFloat = parseFloat(actualRate);
+  const adjustedRateFloat = parseFloat(adjustedRate);
+
+  return actualRateFloat - adjustedRateFloat;
+}

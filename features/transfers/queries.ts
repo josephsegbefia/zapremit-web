@@ -16,13 +16,14 @@ export const getTransferFee = async () => {
         Query.equal("is_active", true),
       ]
     );
-    if (transferFees.total === 0) {
-      return { documents: [], total: 0 };
-    }
-    return transferFees.documents;
+    // if (transferFees.total === 0) {
+    //   return 0;
+    // }
+    const fee = transferFees.documents[0];
+    return parseFloat(fee.value);
   } catch (error) {
     console.log(error);
-    return { documents: [], total: 0 };
+    // return 0;
   }
 };
 

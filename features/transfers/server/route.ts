@@ -5,6 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { ID } from "node-appwrite";
 import { createTransferSchema } from "../schemas";
 import { getTransferFee } from "../queries";
+import { calcRateDifference } from "@/lib/utils";
 
 const app = new Hono().post(
   "/",
@@ -14,7 +15,8 @@ const app = new Hono().post(
     const databases = c.get("databases");
     const user = c.get("user");
 
-    const transferFee = getTransferFee();
+    const transferFee = await getTransferFee();
+    let transferProfit;
 
     const {
       customerId,
@@ -23,11 +25,21 @@ const app = new Hono().post(
       destinationCurrency,
       originCurrency,
       exchangeRate,
+      adjustedExchangeRate,
       receivedAmount,
       profit,
       originCountry,
       destinationCountry,
     } = c.req.valid("json");
+
+    const exchangeRateDifference = calcRateDifference(
+      exchangeRate,
+      adjustedExchangeRate
+    );
+
+    if (transferFee) {
+      transferProfit = transferFee + exchangeRateDifference;
+    }
 
     const transfer = await databases.createDocument(
       DATABASE_ID,
@@ -40,9 +52,10 @@ const app = new Hono().post(
         destinationCurrency,
         originCurrency,
         exchangeRate,
+        adjustedExchangeRate,
         receivedAmount,
         fee: transferFee,
-        profit,
+        profit: transferProfit,
         originCountry,
         destinationCountry,
         userId: user.$id,
