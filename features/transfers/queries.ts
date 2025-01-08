@@ -11,7 +11,7 @@ export const getTransferFee = async () => {
       FEES_AND_PROMOTIONS_ID,
       [
         Query.equal("type", "fee"),
-        Query.equal("name", "transaction fee"),
+        Query.equal("name", "transactionfee"),
         Query.equal("applies_to", "transfers"),
         Query.equal("is_active", true),
       ]
@@ -50,5 +50,3 @@ export const getRateAdjustment = async () => {
     return "Not found";
   }
 };
-
-export const getExchangeRate = () => {};

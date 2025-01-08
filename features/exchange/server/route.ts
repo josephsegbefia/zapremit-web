@@ -76,7 +76,7 @@ const app = new Hono().get(
       const apiData = await response.json();
       const newRate = apiData.conversion_rate;
 
-      c; // Await the rate adjustment
+      // Await the rate adjustment
       const rateAdjPercent = await getRateAdjustment();
 
       // Handle the case where "Not found" is returned
@@ -98,7 +98,7 @@ const app = new Hono().get(
           storedRate.documents[0].$id,
           {
             rate: newRate.toString(),
-            adjrate: roundedAdjustedRate.toString(), // Added later
+            adjRate: roundedAdjustedRate.toString(), // Added later by me
             expires_at: expiryTime.toISOString(),
             is_locked: false,
           }
@@ -112,14 +112,14 @@ const app = new Hono().get(
           {
             key: exchange_key,
             rate: newRate.toString(),
-            adjRate: roundedAdjustedRate.toString(), // Added later
+            adjRate: roundedAdjustedRate.toString(), // Added later by me
             expires_at: expiryTime.toISOString(),
             is_locked: false,
           }
         );
       }
 
-      return c.json({ conversion_rate: newRate });
+      return c.json({ conversion_rate: roundedAdjustedRate });
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
       return c.json({ error: "Failed to fetch and update exchange rate" }, 500);
