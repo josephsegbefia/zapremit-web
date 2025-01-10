@@ -2,6 +2,7 @@ import { Navbar } from "@/components/shared-components/navbar";
 import { Sidebar } from "@/components/shared-components/sidebar";
 import { CreateRecipientModal } from "@/features/recipients/components/create-recipient-modal";
 import { UpdateRecipientModal } from "@/features/recipients/components/update-recipient-modal";
+import { CreateTransferModalRecipientPage } from "@/features/transfers/components/create-transfer-modal-recipient-page";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="min-h-screen">
       <CreateRecipientModal />
       <UpdateRecipientModal />
+      <CreateTransferModalRecipientPage />
       <div className="flex w-full h-full">
         <div className="fixed top-0 left-0 hidden lg:block lg:w-[264px] h-full overflow-y-auto">
           <Sidebar />

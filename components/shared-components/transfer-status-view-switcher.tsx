@@ -1,20 +1,25 @@
 "use client";
-import { DottedSeparator } from "./dotted-separator";
+// import { DottedSeparator } from "./dotted-separator";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQueryState } from "nuqs";
 import { RiAddCircleFill } from "react-icons/ri";
+import { useCreateTransferModalRecipientPage } from "@/features/transfers/hooks/use-create-transfer-modal-recipicient-page";
 
 interface TransferStatusViewSwitcherProps {
   isRecipientDetailsPage: boolean;
+  recipientId: string;
 }
 
 export const TransferStatusViewSwitcher = ({
   isRecipientDetailsPage,
+  recipientId,
 }: TransferStatusViewSwitcherProps) => {
   const [view, setView] = useQueryState("transfer-status", {
     defaultValue: "completed",
   });
+
+  const { open } = useCreateTransferModalRecipientPage();
   return (
     <Tabs
       className="flex-1 w-full border rounded-lg"
@@ -50,12 +55,18 @@ export const TransferStatusViewSwitcher = ({
             >
               Canceled
             </TabsTrigger>
+            <TabsTrigger
+              className="h-8 w-full lg:w-auto font-work-sans"
+              value="failed"
+            >
+              Failed
+            </TabsTrigger>
           </TabsList>
           {isRecipientDetailsPage && (
             <Button
               size="sm"
               className="w-full lg:w-auto bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
-              onClick={() => {}}
+              onClick={() => open(recipientId)}
             >
               <RiAddCircleFill className="size-4 mr-2" />
               New Transfer
