@@ -1,3 +1,4 @@
+"use client";
 import { useFetchRecipient } from "@/features/recipients/api/use-fetch-recipient";
 import { useCreateTransferModalRecipientPage } from "../hooks/use-create-transfer-modal-recipicient-page";
 import { useCreateTransfer } from "../api/use-create-transfer";
@@ -7,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "@/components/shared-components/dotted-separator";
-import { ArrowRight, Loader } from "lucide-react";
+import { Loader, Send } from "lucide-react";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
 import { useGetExchangeRate } from "@/features/exchange/api/use-get-exchange-rate";
@@ -20,6 +21,9 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface CreateTransferFormRecipientPageProps {
   onCancel?: () => void;
@@ -27,8 +31,13 @@ interface CreateTransferFormRecipientPageProps {
 export const CreateTransferFormRecipientPage = ({
   onCancel,
 }: CreateTransferFormRecipientPageProps) => {
+  const [baseCurrency, setBaseCurrency] = useState("");
+  const [targetCurrency, setTargetCurrency] = useState("");
+  const [debounceBase, setDebounceBase] = useState("");
+  const [debounceTarget, setDebounceTarget] = useState("");
+
   const { recipientId } = useCreateTransferModalRecipientPage();
-  const { data, isLoading, error } = useFetchRecipient(recipientId);
+  const { data, isLoading } = useFetchRecipient(recipientId);
   const { mutate, isPending } = useCreateTransfer();
   const {
     data: beneficiaryCountry,
@@ -51,6 +60,7 @@ export const CreateTransferFormRecipientPage = ({
   });
 
   const isBusy =
+    isLoading ||
     isLoadingBeneficiaryCountry ||
     isFetchingBeneficiaryCountry ||
     isLoadingOriginCountry ||
@@ -77,6 +87,44 @@ export const CreateTransferFormRecipientPage = ({
       }
     );
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceBase(baseCurrency);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [baseCurrency]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceTarget(targetCurrency);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [targetCurrency]);
+
+  useEffect(() => {
+    if (debounceBase !== "") {
+      if (exchangeRate) {
+        const convertedTarget = (
+          parseFloat(debounceBase) * exchangeRate
+        ).toFixed(2);
+        setTargetCurrency(convertedTarget);
+      }
+    }
+  }, [debounceBase, exchangeRate]);
+
+  useEffect(() => {
+    if (debounceTarget !== "") {
+      if (exchangeRate) {
+        const convertedBase = (
+          parseFloat(debounceTarget) / exchangeRate
+        ).toFixed(2);
+        setBaseCurrency(convertedBase);
+      }
+    }
+  }, [debounceTarget, exchangeRate]);
 
   if (isBusy) {
     return (
@@ -172,9 +220,15 @@ export const CreateTransferFormRecipientPage = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="e.g 20"
+                            type="number"
+                            step="0.01" // Allows floating values
+                            placeholder="e.g 20.00"
                             {...field}
                             disabled={isPending}
+                            defaultValue="0.00"
+                            value={baseCurrency} // Starts with a floating-point value
+                            onChange={(e) => setBaseCurrency(e.target.value)}
+                            className="w-full h-10 px-8 py-3 border rounded-md"
                           />
                         </FormControl>
                       </FormItem>
@@ -190,14 +244,47 @@ export const CreateTransferFormRecipientPage = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="e.g 20"
+                            type="number"
+                            step="0.01" // Allows floating values
+                            placeholder="e.g 20.00"
                             {...field}
                             disabled={isPending}
+                            defaultValue="0.00" // Starts with a floating-point value
+                            value={targetCurrency}
+                            onChange={(e) => setTargetCurrency(e.target.value)}
+                            className="w-full h-10 px-8 py-3 border rounded-md"
                           />
                         </FormControl>
                       </FormItem>
                     )}
                   />
+                </div>
+                <p className="text-teal-800 font-semibold text-xs">
+                  1 {base} = {exchangeRate} {target}
+                </p>
+                <DottedSeparator className="py-7" />
+                <div className="flex items-center justify-start gap-3">
+                  <Button
+                    type="button"
+                    size="lg"
+                    variant="destructive"
+                    onClick={onCancel}
+                    disabled={isPending}
+                    className={cn(!onCancel && "invisible")}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isPending}
+                    variant="zap"
+                  >
+                    <span className="flex justify-center items-center">
+                      <Send className="size-4 mr-2" />
+                      Complete Transfer
+                    </span>
+                  </Button>
                 </div>
               </div>
             </form>

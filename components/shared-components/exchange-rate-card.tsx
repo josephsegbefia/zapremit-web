@@ -44,8 +44,6 @@ const ExchangeRateCard = () => {
     return null;
   }
 
-  console.log("RATE===>", data);
-
   return (
     <Card className="w-full lg:w-2/3 sm:h-[300px] md:h-[300px] lg:h-[300px] border-none shadow-none">
       <CardHeader className="flex px-7 py-3">
