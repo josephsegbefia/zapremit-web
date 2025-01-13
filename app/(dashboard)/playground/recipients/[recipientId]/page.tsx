@@ -3,9 +3,10 @@ import { DottedSeparator } from "@/components/shared-components/dotted-separator
 import { TransferStatusViewSwitcher } from "@/components/shared-components/transfer-status-view-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCurrent } from "@/features/auth/api/use-current";
 import { useFetchRecipient } from "@/features/recipients/api/use-fetch-recipient";
 import { ArrowLeftIcon, Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 interface ViewRecipientIdPageProps {
   params: {
@@ -14,6 +15,9 @@ interface ViewRecipientIdPageProps {
 }
 
 const ViewRecipientIdPage = ({ params }: ViewRecipientIdPageProps) => {
+  const user = useCurrent();
+
+  if (!user) redirect("/sign-in");
   const router = useRouter();
   const recipientId = params.recipientId;
   const { data, isLoading } = useFetchRecipient(recipientId);

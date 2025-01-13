@@ -69,8 +69,11 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       { json: finalValues },
       {
         onSuccess: () => {
-          console.log("Recipient created successfully");
-          form.reset();
+          if (onCancel) {
+            onCancel();
+          }
+          // console.log("Recipient created successfully");
+          // form.reset();
         },
         onError: (error) => {
           console.error("Error creating recipient:", error);

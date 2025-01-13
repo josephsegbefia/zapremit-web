@@ -11,7 +11,7 @@ export const createTransferSchema = z.object({
   exchangeRate: z.string(),
   adjustedExchangeRate: z.string(),
   receivedAmount: z.string().trim(),
-  profit: z.string(),
+  // profit: z.string(),
 });
 
 export const updateTransferSchema = z.object({});
