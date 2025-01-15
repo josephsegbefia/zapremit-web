@@ -20,10 +20,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useGetCustomer } from "@/features/customers/api/use-get-customer";
+import { useGetActualRate } from "@/features/exchange/api/use-get-actual-rate";
 
 interface CreateTransferFormRecipientPageProps {
   onCancel?: () => void;
@@ -51,6 +54,8 @@ export const CreateTransferFormRecipientPage = ({
     isFetching: isFetchingOriginCountry,
   } = useGetCustomerOriginCountry();
 
+  const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
+
   const base = originCountry?.currenyCode || "EUR";
   const target = beneficiaryCountry?.currencyCode || "GHS";
 
@@ -59,22 +64,43 @@ export const CreateTransferFormRecipientPage = ({
     target,
   });
 
+  const { data: actualRate, isLoading: isLoadingActualRate } = useGetActualRate(
+    { base, target }
+  );
+
   const isBusy =
     isLoading ||
     isLoadingBeneficiaryCountry ||
     isFetchingBeneficiaryCountry ||
     isLoadingOriginCountry ||
     isFetchingOriginCountry ||
+    isLoadingCustomer ||
+    isLoadingActualRate ||
     isLoadingRate;
 
   const form = useForm<z.infer<typeof createTransferSchema>>({
     resolver: zodResolver(createTransferSchema),
+    defaultValues: {
+      sentAmount: "0.00",
+      receivedAmount: "0.00",
+    },
   });
 
   const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
     const finalValues = {
-      ...values,
+      customerId: customer?.$id || "",
+      recipientId: recipientId || "",
+      sentAmount: baseCurrency, // Directly from the form field
+      receivedAmount: targetCurrency, // Directly from the form field
+      originCountry: originCountry?.name || "",
+      destinationCountry: beneficiaryCountry?.name || "",
+      destinationCurrency: beneficiaryCountry?.currencyCode || "",
+      originCurrency: originCountry?.currencyCode || "",
+      exchangeRate: actualRate?.toString() || "",
+      adjustedExchangeRate: exchangeRate?.toString() || "",
     };
+
+    console.log("Final Payload:", finalValues);
 
     mutate(
       { json: finalValues },
@@ -83,6 +109,9 @@ export const CreateTransferFormRecipientPage = ({
           if (onCancel) {
             onCancel();
           }
+        },
+        onError: (error) => {
+          console.error("Error creating transfer:", error);
         },
       }
     );
@@ -108,7 +137,7 @@ export const CreateTransferFormRecipientPage = ({
     if (debounceBase !== "") {
       if (exchangeRate) {
         const convertedTarget = (
-          parseFloat(debounceBase) * exchangeRate
+          parseFloat(debounceBase || "0") * exchangeRate
         ).toFixed(2);
         setTargetCurrency(convertedTarget);
       }
@@ -119,14 +148,28 @@ export const CreateTransferFormRecipientPage = ({
     if (debounceTarget !== "") {
       if (exchangeRate) {
         const convertedBase = (
-          parseFloat(debounceTarget) / exchangeRate
+          parseFloat(debounceTarget || "0") / exchangeRate
         ).toFixed(2);
         setBaseCurrency(convertedBase);
       }
     }
   }, [debounceTarget, exchangeRate]);
 
-  if (isBusy) {
+  const handleBaseCurrencyChange = (value: string) => {
+    setBaseCurrency(value);
+    if (!value) {
+      setTargetCurrency("0.00");
+    }
+  };
+
+  const handleTargetCurrencyChange = (value: string) => {
+    setTargetCurrency(value);
+    if (!value) {
+      setBaseCurrency("0.00");
+    }
+  };
+
+  if (isBusy || !customer) {
     return (
       <Card className="w-full h-full border-none shadow-none">
         <CardContent className="p-7">
@@ -151,16 +194,16 @@ export const CreateTransferFormRecipientPage = ({
         <DottedSeparator />
       </div>
       <CardContent className="p-4">
-        <div className="h-full flex flex-col overflow-auto p-1">
-          <div className="flex flex-row gap-2 lg:flex-row justify-between items-center">
-            <div>
+        <div className="h-full flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row gap-2 justify-between">
+            <div className="flex flex-col w-full">
               <label
                 htmlFor="origin-country"
                 className="text-sm font-work-sans font-semibold text-teal-800"
               >
                 Sending from
               </label>
-              <div className="relative flex justify-center items-center border border-gray-200 rounded-md bg-gray-100 px-2 py-3">
+              <div className="relative flex justify-center items-center border border-gray-200 rounded-md bg-gray-100 px-2 py-3 w-full">
                 <div className="absolute left-2">
                   <Image
                     src={originCountry?.flagImageUrl || ""}
@@ -179,14 +222,14 @@ export const CreateTransferFormRecipientPage = ({
                 />
               </div>
             </div>
-            <div>
+            <div className="flex flex-col w-full">
               <label
                 htmlFor="beneficiary-country"
                 className="text-sm font-work-sans font-semibold text-teal-800"
               >
                 Sending to
               </label>
-              <div className="relative flex justify-center items-center border border-gray-200 rounded-md bg-gray-100 px-2 py-3">
+              <div className="relative flex justify-center items-center border border-gray-200 rounded-md bg-gray-100 px-2 py-3 w-full">
                 <div className="absolute left-2">
                   <Image
                     src={beneficiaryCountry?.flagImageUrl || ""}
@@ -209,7 +252,7 @@ export const CreateTransferFormRecipientPage = ({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-y-4 mt-4">
-                <div className="flex flex-row gap-2 lg:flex-row justify-between items-center">
+                <div className="flex flex-col lg:flex-row gap-2 justify-between items-center">
                   <FormField
                     control={form.control}
                     name="sentAmount"
@@ -219,21 +262,28 @@ export const CreateTransferFormRecipientPage = ({
                           You send
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01" // Allows floating values
-                            placeholder="e.g 20.00"
-                            {...field}
-                            disabled={isPending}
-                            defaultValue="0.00"
-                            value={baseCurrency} // Starts with a floating-point value
-                            onChange={(e) => setBaseCurrency(e.target.value)}
-                            className="w-full h-10 px-8 py-3 border rounded-md"
-                          />
+                          <div className="relative">
+                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-800 font-work-sans font-semibold">
+                              {base}
+                            </span>
+                            <Input
+                              type="number"
+                              placeholder="e.g 20.00"
+                              {...field}
+                              disabled={isPending}
+                              value={baseCurrency}
+                              onChange={(e) =>
+                                handleBaseCurrencyChange(e.target.value)
+                              }
+                              className="w-full h-10 px-8 py-3 border rounded-md pr-16  text-teal-600 font-work-sans font-semibold" // Add padding for the text
+                            />
+                          </div>
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
                     name="receivedAmount"
@@ -243,25 +293,33 @@ export const CreateTransferFormRecipientPage = ({
                           They receive
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01" // Allows floating values
-                            placeholder="e.g 20.00"
-                            {...field}
-                            disabled={isPending}
-                            defaultValue="0.00" // Starts with a floating-point value
-                            value={targetCurrency}
-                            onChange={(e) => setTargetCurrency(e.target.value)}
-                            className="w-full h-10 px-8 py-3 border rounded-md"
-                          />
+                          <div className="relative">
+                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-800 font-work-sans font-semibold">
+                              {target}
+                            </span>
+                            <Input
+                              type="number"
+                              placeholder="e.g 20.00"
+                              {...field}
+                              disabled={isPending}
+                              value={targetCurrency}
+                              onChange={(e) =>
+                                handleTargetCurrencyChange(e.target.value)
+                              }
+                              className="w-full h-10 px-8 py-3 border rounded-md pr-16 text-teal-600 font-work-sans font-semibold"
+                            />
+                          </div>
                         </FormControl>
                       </FormItem>
                     )}
                   />
                 </div>
-                <p className="text-teal-800 font-semibold text-xs">
-                  1 {base} = {exchangeRate} {target}
-                </p>
+                <div className="mt-2">
+                  <p className="text-teal-800 font-semibold text-xs text-start">
+                    1 {base} = {exchangeRate} {target}
+                  </p>
+                </div>
+
                 <DottedSeparator className="py-7" />
                 <div className="flex items-center justify-start gap-3">
                   <Button
@@ -279,6 +337,7 @@ export const CreateTransferFormRecipientPage = ({
                     size="lg"
                     disabled={isPending}
                     variant="zap"
+                    // onClick={onSubmit}
                   >
                     <span className="flex justify-center items-center">
                       <Send className="size-4 mr-2" />

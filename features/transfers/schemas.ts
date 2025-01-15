@@ -3,14 +3,18 @@ import { z } from "zod";
 export const createTransferSchema = z.object({
   customerId: z.string(),
   recipientId: z.string(),
-  sentAmount: z.string().trim().min(1, "Required"),
+  sentAmount: z
+    .union([z.string().trim(), z.number()])
+    .refine((value) => value !== "" && value !== 0, "Required"),
   originCountry: z.string(),
   destinationCountry: z.string(),
-  destinationCurrency: z.string().trim().min(1, "Required"),
-  originCurrency: z.string().trim().min(1, "Required"),
+  destinationCurrency: z.string(),
+  originCurrency: z.string().trim(),
   exchangeRate: z.string(),
   adjustedExchangeRate: z.string(),
-  receivedAmount: z.string().trim(),
+  receivedAmount: z
+    .union([z.string().trim(), z.number()])
+    .refine((value) => value !== "" && value !== 0, "Required"),
   // profit: z.string(),
 });
 
