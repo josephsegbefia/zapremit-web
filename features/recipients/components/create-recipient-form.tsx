@@ -35,6 +35,8 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
   const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
     useGetCustomerBeneficiaryCountry();
 
+  console.log("BENECOUNT", beneficiaryCountry?.paymentMethods);
+
   const customerCallingCode = beneficiaryCountry?.callingCode;
   const beneficiaryCountryName = beneficiaryCountry?.name;
   const form = useForm<z.infer<typeof createRecipientSchema>>({
@@ -62,8 +64,6 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       ...values,
       customerId,
     };
-
-    console.log("Submitting values:", finalValues);
 
     mutate(
       { json: finalValues },

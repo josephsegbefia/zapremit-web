@@ -2,11 +2,13 @@
 import { DottedSeparator } from "@/components/shared-components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { useCurrent } from "@/features/auth/api/use-current";
+import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetRecipients } from "@/features/recipients/api/use-get-recipients";
 import { columns } from "@/features/recipients/components/columns";
 import { RecipientDataTable } from "@/features/recipients/components/recipient-data-table";
 import { useCreateRecipientModal } from "@/features/recipients/hooks/use-create-recipient-modal";
 import { Loader, UsersIcon } from "lucide-react";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { RiAddCircleFill } from "react-icons/ri";
 
@@ -17,6 +19,18 @@ const RecipientsPage = () => {
 
   const { open } = useCreateRecipientModal();
   const { data: recipients, isLoading } = useGetRecipients();
+  const {
+    data: beneficiaryCountry,
+    isLoading: isLoadingBeneficiaryCountry,
+    isFetching: isFetchingBeneficiaryCountry,
+  } = useGetCustomerBeneficiaryCountry();
+
+  const isBusy =
+    isLoading || isLoadingBeneficiaryCountry || isFetchingBeneficiaryCountry;
+  // Filter recipients by beneficiaryCountry.name
+  const filteredRecipients = recipients?.documents.filter(
+    (recipient) => recipient.country === beneficiaryCountry?.name
+  );
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -27,6 +41,7 @@ const RecipientsPage = () => {
             Recipients
           </span>
         </p>
+
         <div>
           <Button
             size="sm"
@@ -40,16 +55,33 @@ const RecipientsPage = () => {
           </Button>
         </div>
       </div>
+      {!isBusy && (
+        <p className="text-teal-800 text-sm font-medium flex items-center gap-2">
+          Displaying recipients for the selected beneficiary country:
+          <Image
+            src={beneficiaryCountry?.flagImageUrl || ""}
+            alt="country flag"
+            width={30}
+            height={20}
+            className="rounded-sm"
+          />
+          <span className="font-semibold">{beneficiaryCountry?.name}</span>.
+        </p>
+      )}
+
       <DottedSeparator />
-      {isLoading ? (
+
+      {isBusy ? (
         <div className="flex justify-center items-center mt-20">
           <Loader className="w-6 h-6 animate-spin text-teal-800" />
         </div>
       ) : (
-        <RecipientDataTable
-          data={recipients?.documents ?? []}
-          columns={columns}
-        />
+        <>
+          <RecipientDataTable
+            data={filteredRecipients ?? []}
+            columns={columns}
+          />
+        </>
       )}
     </div>
   );
