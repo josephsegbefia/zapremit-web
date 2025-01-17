@@ -24,6 +24,7 @@ const app = new Hono()
         callingCode,
         phone,
         country,
+        mobileWallet,
       } = c.req.valid("json");
 
       try {
@@ -56,6 +57,7 @@ const app = new Hono()
             phone,
             country,
             userId: user.$id,
+            mobile_wallet: mobileWallet,
           }
         );
 
@@ -117,19 +119,31 @@ const app = new Hono()
 
       const { recipientId } = c.req.param();
 
-      const { name, email, street_address, city, callingCode, phone, country } =
-        c.req.valid("json");
+      const {
+        name,
+        email,
+        street_address,
+        city,
+        callingCode,
+        phone,
+        country,
+        mobileWallet,
+      } = c.req.valid("json");
 
-      // const getRecipientToUpdate = await databases.getDocument<Recipient>(
-      //   DATABASE_ID,
-      //   RECIPIENTS_ID,
-      //   recipientId
-      // );
       const recipient = await databases.updateDocument(
         DATABASE_ID,
         RECIPIENTS_ID,
         recipientId,
-        { name, email, street_address, city, callingCode, phone, country }
+        {
+          name,
+          email,
+          street_address,
+          city,
+          callingCode,
+          phone,
+          country,
+          mobileWallet,
+        }
       );
 
       return c.json({ data: recipient });

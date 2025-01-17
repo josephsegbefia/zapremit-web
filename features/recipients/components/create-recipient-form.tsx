@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-// import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { createRecipientSchema } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,19 +23,28 @@ import { useGetCustomer } from "@/features/customers/api/use-get-customer";
 import { Loader } from "lucide-react";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useCreateRecipient } from "../api/use-create-recipient";
-// import { Customer } from "@/features/customers/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
 
 interface CreateRecipientFormProps {
   onCancel?: () => void;
 }
 
 export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
+  const [sendTransferUpdate, setSendTransferUpdate] = useState(false);
   const { mutate, isPending } = useCreateRecipient();
   const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
   const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
     useGetCustomerBeneficiaryCountry();
 
-  console.log("BENECOUNT", beneficiaryCountry?.paymentMethods);
+  const mobileWallets = beneficiaryCountry?.paymentMethods;
 
   const customerCallingCode = beneficiaryCountry?.callingCode;
   const beneficiaryCountryName = beneficiaryCountry?.name;
@@ -44,18 +53,23 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     defaultValues: {
       name: "",
       phone: "",
-      email: "",
-      street_address: "",
-      city: "",
+      email: undefined,
+      street_address: undefined,
+      city: undefined,
       send_transfer_update: false,
       callingCode: customerCallingCode,
       country: beneficiaryCountryName,
+      mobileWallet: undefined,
     },
   });
 
   if (!customer) {
     return null;
   }
+
+  const changeTransferUpdateStatus = () => {
+    setSendTransferUpdate((prev) => !prev);
+  };
 
   const customerId = customer.$id;
 
@@ -123,7 +137,9 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Recipient Name</FormLabel>
+                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                        Recipient Name
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter recipient's full name"
@@ -140,11 +156,14 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Recipient Email (Optional)</FormLabel>
+                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                        Recipient Email (Optional)
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter recipient's email"
                           {...field}
+                          value={field.value || ""}
                           disabled={isPending}
                         />
                       </FormControl>
@@ -158,7 +177,9 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                       name="callingCode"
                       render={() => (
                         <FormItem>
-                          <FormLabel>Calling Code</FormLabel>
+                          <FormLabel className="text-sm font-worl-sans text-teal-800">
+                            Calling Code
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Country Code"
@@ -176,7 +197,9 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel className="text-sm font-worl-sans text-teal-800">
+                            Phone Number
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter beneficiary phone number"
@@ -190,16 +213,20 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                     />
                   </div>
                 </div>
+
                 <FormField
                   control={form.control}
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Street Address</FormLabel>
+                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                        Street Address
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter beneficiary street address"
                           {...field}
+                          value={field.value || ""}
                           disabled={isPending}
                         />
                       </FormControl>
@@ -211,11 +238,64 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                        City
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter recipient's city"
                           {...field}
+                          value={field.value || ""}
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mobileWallet"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                        Select Mobile Wallet (Optional)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isPending}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Mobile Wallet" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mobileWallets?.map((wallet) => (
+                              <SelectItem key={wallet} value={wallet}>
+                                {wallet}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="send_transfer_update"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>Transfer Notifications</FormLabel>
+                        <FormDescription>
+                          Send transfer updates to the recipient
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={sendTransferUpdate}
+                          onCheckedChange={changeTransferUpdateStatus}
                           disabled={isPending}
                         />
                       </FormControl>

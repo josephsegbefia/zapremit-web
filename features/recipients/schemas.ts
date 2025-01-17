@@ -13,6 +13,7 @@ export const createRecipientSchema = z.object({
   callingCode: z.string().optional(),
   send_transfer_update: z.boolean().optional(),
   country: z.string(),
+  mobileWallet: z.string().optional(),
 });
 
 export const updateRecipientSchema = z.object({
@@ -29,4 +30,5 @@ export const updateRecipientSchema = z.object({
   callingCode: z.string().optional(),
   send_transfer_update: z.boolean().optional(),
   country: z.string(),
+  mobileWallet: z.string().optional(),
 });

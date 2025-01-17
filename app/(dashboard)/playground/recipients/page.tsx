@@ -66,7 +66,7 @@ const RecipientsPage = () => {
             height={20}
             className="rounded-sm"
           />
-          <span className="font-semibold">{beneficiaryCountry?.name}</span>.
+          <span className="font-semibold">{beneficiaryCountry?.name}</span>
         </p>
       )}
 

@@ -92,7 +92,7 @@ export function RecipientDataTable({ columns, data }: RecipientDataTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Results
+                  No Recipients found
                 </TableCell>
               </TableRow>
             )}
