@@ -7,6 +7,7 @@ import { useGetRecipients } from "@/features/recipients/api/use-get-recipients";
 import { columns } from "@/features/recipients/components/columns";
 import { RecipientDataTable } from "@/features/recipients/components/recipient-data-table";
 import { useCreateRecipientModal } from "@/features/recipients/hooks/use-create-recipient-modal";
+import { Recipient } from "@/features/recipients/types";
 import { Loader, UsersIcon } from "lucide-react";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -78,7 +79,7 @@ const RecipientsPage = () => {
       ) : (
         <>
           <RecipientDataTable
-            data={filteredRecipients ?? []}
+            data={filteredRecipients as Recipient[]}
             columns={columns}
           />
         </>

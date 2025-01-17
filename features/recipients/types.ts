@@ -9,5 +9,5 @@ export type Recipient = Models.Document & {
   street_address: string;
   city: string;
   country: string;
-  send_transfer_update: boolean;
+  // send_transfer_update: boolean;
 };

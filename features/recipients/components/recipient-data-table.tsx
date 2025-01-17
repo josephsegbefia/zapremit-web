@@ -22,16 +22,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Recipient } from "../types";
 
-interface RecipientDataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface RecipientDataTableProps {
+  columns: ColumnDef<Recipient, unknown>[];
+  data: Recipient[];
 }
 
-export function RecipientDataTable<TData, TValue>({
-  columns,
-  data,
-}: RecipientDataTableProps<TData, TValue>) {
+export function RecipientDataTable({ columns, data }: RecipientDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
