@@ -56,7 +56,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       email: undefined,
       street_address: undefined,
       city: undefined,
-      send_transfer_update: false,
+      send_transfer_update: true,
       callingCode: customerCallingCode,
       country: beneficiaryCountryName,
       mobileWallet: undefined,
@@ -67,9 +67,9 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
     return null;
   }
 
-  const changeTransferUpdateStatus = () => {
-    setSendTransferUpdate((prev) => !prev);
-  };
+  // const changeTransferUpdateStatus = () => {
+  //   setSendTransferUpdate((prev) => !prev);
+  // };
 
   const customerId = customer.$id;
 
@@ -79,6 +79,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       customerId,
     };
 
+    console.log(finalValues);
     mutate(
       { json: finalValues },
       {
@@ -284,23 +285,25 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                 <FormField
                   control={form.control}
                   name="send_transfer_update"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                      <div className="space-y-0.5">
-                        <FormLabel>Transfer Notifications</FormLabel>
-                        <FormDescription>
-                          Send transfer updates to the recipient
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={sendTransferUpdate}
-                          onCheckedChange={changeTransferUpdateStatus}
-                          disabled={isPending}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>Transfer Notifications</FormLabel>
+                          <FormDescription>
+                            Send transfer updates to the recipient
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            disabled={isPending}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
                 />
               </div>
               <DottedSeparator className="py-7" />
