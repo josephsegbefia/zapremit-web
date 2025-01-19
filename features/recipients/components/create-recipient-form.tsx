@@ -31,14 +31,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
 
 interface CreateRecipientFormProps {
   onCancel?: () => void;
 }
 
 export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
-  const [sendTransferUpdate, setSendTransferUpdate] = useState(false);
   const { mutate, isPending } = useCreateRecipient();
   const { data: customer, isLoading: isLoadingCustomer } = useGetCustomer();
   const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
