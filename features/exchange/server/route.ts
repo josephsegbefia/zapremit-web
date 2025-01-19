@@ -49,7 +49,7 @@ const app = new Hono()
     }
   )
   .get(
-    "/get-exchange-rate/:base/:target",
+    "/get-adjusted-exchange-rate/:base/:target",
     sessionMiddleware,
     zValidator(
       "param",

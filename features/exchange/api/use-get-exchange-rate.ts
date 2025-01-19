@@ -11,13 +11,13 @@ type ExchangeRateResponse = {
   error?: string;
 };
 
-export const useGetExchangeRate = (params: ExchangeRateParams) => {
+export const useGetAdjustedExchangeRate = (params: ExchangeRateParams) => {
   const query = useQuery({
     queryKey: ["get-exchange-rate", params],
     queryFn: async (): Promise<number> => {
-      const response = await client.api.exchange["get-exchange-rate"][":base"][
-        ":target"
-      ].$get({ param: params });
+      const response = await client.api.exchange["get-adjusted-exchange-rate"][
+        ":base"
+      ][":target"].$get({ param: params });
 
       // Parse the JSON response
       const json: ExchangeRateResponse = await response.json();
