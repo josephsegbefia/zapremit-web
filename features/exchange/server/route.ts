@@ -15,7 +15,7 @@ import { getRateAdjustment } from "@/features/transfers/queries";
 
 const app = new Hono()
   .get(
-    "get-actual-rate/:base/:target",
+    "/get-actual-rate/:base/:target",
     sessionMiddleware,
     zValidator(
       "param",
@@ -26,7 +26,10 @@ const app = new Hono()
     ),
     async (c) => {
       try {
-        const { base, target } = c.req.param();
+        const { base, target } = c.req.param() as {
+          base: string;
+          target: string;
+        };
         const databases = c.get("databases");
         const exchange_key = `${base}_${target}`;
 
@@ -60,7 +63,10 @@ const app = new Hono()
     ),
     async (c) => {
       try {
-        const { base, target } = c.req.param();
+        const { base, target } = c.req.param() as {
+          base: string;
+          target: string;
+        };
         const databases = c.get("databases");
         const exchange_key = `${base}_${target}`;
         const now = new Date();

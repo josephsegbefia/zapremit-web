@@ -49,3 +49,25 @@ export const getRateAdjustment = async () => {
     return "Not Found";
   }
 };
+
+export const calculateTransferProfit = (
+  actualRate: number, // Market exchange rate (e.g., 15 GHS/USD)
+  // adjustedRate: number, // Offered exchange rate (e.g., 14.50 GHS/USD)
+  fee: number, // Transfer fee in USD (e.g., 0.99)
+  sentAmount: number, // Amount sent in USD (e.g., 100)
+  receivedAmount: number // Amount received in GHS (e.g., 1450)
+): number => {
+  // Calculate the expected amount in GHS using the actual market rate
+  const expectedAmountGHS = sentAmount * actualRate;
+
+  // Calculate the exchange rate profit in GHS
+  const exchangeRateProfitGHS = expectedAmountGHS - receivedAmount;
+
+  // Convert the exchange rate profit from GHS to USD using the actual rate
+  const exchangeRateProfitUSD = exchangeRateProfitGHS / actualRate;
+
+  // Calculate total profit (exchange profit + transfer fee)
+  const totalProfit = exchangeRateProfitUSD + fee;
+
+  return parseFloat(totalProfit.toFixed(2)); // Return profit rounded to 2 decimal places
+};
