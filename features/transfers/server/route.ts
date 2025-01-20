@@ -12,7 +12,7 @@ import {
 } from "@/features/customers/queries";
 
 const app = new Hono().post(
-  "/transfers",
+  "/",
   zValidator("json", createTransferSchema),
   sessionMiddleware,
   async (c) => {
