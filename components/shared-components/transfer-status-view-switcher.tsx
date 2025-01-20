@@ -2,9 +2,9 @@
 // import { DottedSeparator } from "./dotted-separator";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCreateTransferModalRecipientPage } from "@/features/transfers/hooks/use-create-transfer-modal-recipient-page";
 import { useQueryState } from "nuqs";
 import { RiAddCircleFill } from "react-icons/ri";
-import { useCreateTransferModalRecipientPage } from "@/features/transfers/hooks/use-create-transfer-modal-recipicient-page";
 
 interface TransferStatusViewSwitcherProps {
   isRecipientDetailsPage: boolean;

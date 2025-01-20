@@ -14,7 +14,7 @@ import Link from "next/link";
 import { DottedSeparator } from "./dotted-separator";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
-import { useGetExchangeRate } from "@/features/exchange/api/use-get-exchange-rate";
+import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
 
 const ExchangeRateCard = () => {
   const {
@@ -33,7 +33,7 @@ const ExchangeRateCard = () => {
     data,
     isLoading: isLoadingRate,
     // error,
-  } = useGetExchangeRate({ base, target });
+  } = useGetAdjustedExchangeRate({ base, target });
 
   const isLoading =
     isLoadingBeneficiaryCountry || isLoadingOriginCountry || isLoadingRate;
