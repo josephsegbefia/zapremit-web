@@ -22,3 +22,30 @@ export const getTransferFee = async () => {
     console.log(error);
   }
 };
+
+export const getRateAdjustment = async () => {
+  try {
+    const { databases } = await createSessionClient();
+
+    const adjustments = await databases.listDocuments(
+      DATABASE_ID,
+      FEES_AND_PROMOTIONS_ID,
+      [
+        Query.equal("type", "rateAdjustment"),
+        Query.equal("name", "adjustment"),
+        Query.equal("applies_to", "transfers"),
+        Query.equal("is_active", true),
+      ]
+    );
+
+    if (adjustments.total === 0) {
+      return "Not found";
+    }
+
+    const percent = adjustments.documents[0];
+    return percent.value;
+  } catch (error) {
+    console.log(error);
+    return "Not Found";
+  }
+};
