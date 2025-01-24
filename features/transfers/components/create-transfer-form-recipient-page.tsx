@@ -16,11 +16,14 @@ import {
 import { createTransferSchema } from "../schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { undefined, z } from "zod";
 import { Input } from "@/components/ui/input";
 import { useGetCustomer } from "@/features/customers/api/use-get-customer";
 import { useGetActualRate } from "@/features/exchange/api/use-get-actual-rate";
 import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
+import { useEffect, useState } from "react";
+import { setTimeout } from "timers";
+import { useCreateTransfer } from "../api/use-create-transfer";
 
 interface CreateTransferFormRecipientPageprops {
   onCancel?: () => void;
@@ -29,6 +32,16 @@ interface CreateTransferFormRecipientPageprops {
 export const CreateTransferFormRecipientPage = ({
   onCancel,
 }: CreateTransferFormRecipientPageprops) => {
+  // Essential: mutation function
+  const { mutate, isPending } = useCreateTransfer();
+  // Start of states for managing the sent amt and received amt
+  const [baseCurrency, setBaseCurrency] = useState<string | number>("");
+  const [targetCurrency, setTargetCurrency] = useState<string | number>("");
+  const [debounceBase, setDebounceBase] = useState<string | number>("");
+  const [debounceTarget, setDebounceTarget] = useState<string | number>("");
+  // End of the states
+
+  // Required values
   const { recipientId } = useCreateTransferModalRecipientPage();
   const { data: recipient, isLoading: isFetchingRecipient } =
     useFetchRecipient(recipientId);
@@ -57,6 +70,8 @@ export const CreateTransferFormRecipientPage = ({
     isLoading: isLoadingAdjustedExchangeRate,
   } = useGetAdjustedExchangeRate({ base, target });
 
+  // End of required Values
+
   const form = useForm<z.infer<typeof createTransferSchema>>({
     resolver: zodResolver(
       createTransferSchema.omit({
@@ -69,7 +84,7 @@ export const CreateTransferFormRecipientPage = ({
     defaultValues: {
       sentAmount: 0,
       receivedAmount: 0,
-      transferReason: undefined,
+      transferReason: "DONATIONS",
     },
   });
 
@@ -94,6 +109,68 @@ export const CreateTransferFormRecipientPage = ({
     isLoadingCustomer ||
     isLoadingRate ||
     isLoadingAdjustedExchangeRate;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentBase = form.getValues("sentAmount");
+      if (currentBase !== 0) {
+        setDebounceBase(currentBase);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [form, setDebounceBase]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentTarget = form.getValues("receivedAmount");
+      if (currentTarget !== 0) {
+        setDebounceTarget(currentTarget);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [form, setDebounceTarget]);
+
+  useEffect(() => {
+    if (debounceBase === "") {
+      form.setValue("receivedAmount", 0);
+    } else if (adjustedExchangeRate) {
+      const convertedTarget = (
+        Number(debounceBase) * adjustedExchangeRate
+      ).toFixed(2);
+      form.setValue("receivedAmount", Number(convertedTarget));
+    }
+  }, [debounceBase, adjustedExchangeRate, form]);
+
+  useEffect(() => {
+    if (debounceTarget === "") {
+      form.setValue("sentAmount", 0);
+    } else if (adjustedExchangeRate) {
+      const convertedBase = (
+        Number(debounceTarget) / adjustedExchangeRate
+      ).toFixed(2);
+      form.setValue("sentAmount", Number(convertedBase));
+    }
+  }, [debounceTarget, adjustedExchangeRate, form]);
+
+  const sentAmountPlaceholder = 10;
+  const receivedAmountPlaceholder =
+    sentAmountPlaceholder * adjustedExchangeRate;
+
+  // const handleBaseCurrencyChange = (value: string) => {
+  //   setBaseCurrency(value);
+  //   if (!value) {
+  //     setTargetCurrency("0.00");
+  //   }
+  // };
+
+  // const handleTargetCurrencyChange = (value: string) => {
+  //   setTargetCurrency(value);
+  //   if (!value) {
+  //     setBaseCurrency("0.00");
+  //   }
+  // };
 
   if (isBusy) {
     return (
@@ -193,9 +270,55 @@ export const CreateTransferFormRecipientPage = ({
                         <FormControl>
                           <div className="relative">
                             <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-800 font-work-sans font-semibold text-xs">
-                              EUR
+                              {base}
                             </span>
-                            <Input type="number" {...field} />
+                            <Input
+                              type="number"
+                              placeholder={sentAmountPlaceholder}
+                              {...field}
+                              disabled={isPending}
+                              value={field.value || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value ? parseFloat(value) : ""); // Convert or clear
+                                setDebounceBase(value ? parseFloat(value) : ""); // For debouncing
+                              }}
+                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                            />
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="receivedAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-work-sans text-teal-800 font-medium">
+                          They receive
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-800 font-work-sans font-semibold text-xs">
+                              {target}
+                            </span>
+                            <Input
+                              type="number"
+                              placeholder={receivedAmountPlaceholder}
+                              {...field}
+                              disabled={isPending}
+                              value={field.value || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                field.onChange(value ? parseFloat(value) : ""); // Convert or clear
+                                setDebounceTarget(
+                                  value ? parseFloat(value) : ""
+                                ); // For debouncing
+                              }}
+                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                            />
                           </div>
                         </FormControl>
                       </FormItem>
