@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader } from "lucide-react";
 import { useCreateTransferModalRecipientPage } from "../hooks/use-create-transfer-modal-recipient-page";
@@ -13,7 +12,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { createTransferSchema } from "../schema";
 import { useForm } from "react-hook-form";
@@ -23,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { useGetActualRate } from "@/features/exchange/api/use-get-actual-rate";
 import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
 import { useEffect, useState } from "react";
+import { setTimeout } from "timers";
 import { useCreateTransfer } from "../api/use-create-transfer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -53,13 +52,10 @@ export const CreateTransferFormRecipientPage = ({
 }: CreateTransferFormRecipientPageprops) => {
   // Essential: mutation function
   const { mutate, isPending } = useCreateTransfer();
-
-  // Essential component states
-  const [baseCurrency, setBaseCurrency] = useState<number | null>(null);
-  const [targetCurrency, setTargetCurrency] = useState<number | null>(null);
-  const [debounceBase, setDebounceBase] = useState<number | null>(null);
-  const [debounceTarget, setDebounceTarget] = useState<number | null>(null);
-
+  const [receivedAmountPlaceholder, setReceivedAmountPlaceholder] =
+    useState("");
+  const [debounceBase, setDebounceBase] = useState<number>(0);
+  const [debounceTarget, setDebounceTarget] = useState<number>(0);
   // End of the states
 
   // Required values
@@ -96,13 +92,13 @@ export const CreateTransferFormRecipientPage = ({
     resolver: zodResolver(
       createTransferSchema.omit({
         recipientId: true,
-        exchangeRate: true,
-        adjustedExchangeRate: true,
+        // adjustedExchangeRate: true,
+        // exchangeRate: true,
       })
     ),
     defaultValues: {
-      sentAmount: 0, // Set a default value to avoid validation errors
-      receivedAmount: 0,
+      sentAmount: 0 as number,
+      receivedAmount: 0 as number,
       transferReason: "DONATIONS",
     },
   });
@@ -118,71 +114,60 @@ export const CreateTransferFormRecipientPage = ({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebounceBase(baseCurrency);
-    }, 1000);
+      const currentBase = Number(form.getValues("sentAmount")) || 0;
+      if (currentBase !== 0) {
+        setDebounceBase(currentBase);
+      }
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [baseCurrency]);
+  }, [form, setDebounceBase]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebounceTarget(targetCurrency);
-    }, 1000);
+      const currentTarget = Number(form.getValues("receivedAmount")) || 0;
+      if (currentTarget !== 0) {
+        setDebounceTarget(currentTarget);
+      }
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [targetCurrency]);
+  }, [form, setDebounceTarget]);
 
   useEffect(() => {
-    if (debounceBase !== null && adjustedExchangeRate) {
-      const convertedTarget = (debounceBase * adjustedExchangeRate).toFixed(2);
-      setTargetCurrency(parseFloat(convertedTarget));
+    if (debounceBase === 0) {
+      form.setValue("receivedAmount", 0);
+    } else if (adjustedExchangeRate) {
+      const convertedTarget = (
+        Number(debounceBase) * adjustedExchangeRate
+      ).toFixed(2);
+      form.setValue("receivedAmount", Number(convertedTarget));
     }
-  }, [debounceBase, adjustedExchangeRate]);
+  }, [debounceBase, adjustedExchangeRate, form]);
 
   useEffect(() => {
-    if (debounceTarget !== null && adjustedExchangeRate) {
-      if (adjustedExchangeRate) {
-        const convertedBase = (debounceTarget / adjustedExchangeRate).toFixed(
-          2
-        );
-
-        setBaseCurrency(parseFloat(convertedBase));
-      }
+    if (debounceTarget === 0) {
+      form.setValue("sentAmount", 0);
+    } else if (adjustedExchangeRate) {
+      const convertedBase = (
+        Number(debounceTarget) / adjustedExchangeRate
+      ).toFixed(2);
+      form.setValue("sentAmount", Number(convertedBase));
     }
-  }, [debounceTarget, adjustedExchangeRate]);
+  }, [debounceTarget, adjustedExchangeRate, form]);
 
-  // const handleBaseCurrencyChange = (value: number) => {
-  //   setBaseCurrency(value);
-  //   if (!value) {
-  //     setTargetCurrency(0);
-  //   }
-  // };
-
-  const handleBaseCurrencyChange = (value: number) => {
-    setBaseCurrency(value);
-    setTimeout(() => form.setValue("sentAmount", value), 0);
-  };
-
-  // const handleTargetCurrencyChange = (value: number) => {
-  //   setTargetCurrency(value);
-  //   if (!value) {
-  //     setBaseCurrency(0);
-  //   }
-  // };
-
-  const handleTargetCurrencyChange = (value: number) => {
-    setTargetCurrency(value);
-    setTimeout(() => form.setValue("receivedAmount", value), 0);
-  };
-
+  const sentAmountPlaceholder = 10;
   useEffect(() => {
-    console.log(baseCurrency, targetCurrency);
-  }, [baseCurrency, targetCurrency]);
+    if (adjustedExchangeRate) {
+      setReceivedAmountPlaceholder(
+        String(sentAmountPlaceholder * adjustedExchangeRate)
+      );
+    }
+  }, [adjustedExchangeRate]);
+
   const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
     const finalValues = {
       ...values,
-      sentAmount: baseCurrency || 0,
-      receivedAmount: targetCurrency || 0,
       recipientId: recipientId,
       adjustedExchangeRate: adjustedExchangeRate ?? 0,
       exchangeRate: exchangeRate ?? 0,
@@ -202,6 +187,11 @@ export const CreateTransferFormRecipientPage = ({
       }
     );
   };
+
+  useEffect(() => {
+    console.log("Adjusted Rate:", adjustedExchangeRate);
+    console.log("Exchange rate:", exchangeRate);
+  }, [adjustedExchangeRate, exchangeRate]);
 
   if (isBusy) {
     return (
@@ -293,7 +283,7 @@ export const CreateTransferFormRecipientPage = ({
                   <FormField
                     control={form.control}
                     name="sentAmount"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
                         <FormLabel className="text-xs font-work-sans text-teal-800 font-medium">
                           You send
@@ -303,23 +293,32 @@ export const CreateTransferFormRecipientPage = ({
                             <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-800 font-work-sans font-semibold text-xs">
                               {base}
                             </span>
-
                             <Input
-                              type="number"
-                              placeholder="10"
                               {...field}
-                              value={field.value || baseCurrency || ""}
+                              type="number"
+                              step="0.01" // Allows integers and decimals
+                              placeholder="10"
+                              className={`border ${
+                                fieldState.error
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              } rounded-md`}
+                            />
+                            {/* <Input
+                              type="number"
+                              placeholder={sentAmountPlaceholder.toString()}
+                              {...field}
                               disabled={isPending}
+                              // value={field.value || 10}
                               onChange={(e) => {
-                                const newValue = Number(e.target.value || 0);
-                                field.onChange(newValue); // Sync with form state
-                                handleBaseCurrencyChange(newValue);
+                                const value = e.target.value;
+                                field.onChange(parseFloat(value)); // Convert or clear
+                                setDebounceBase(value ? parseFloat(value) : 0); // For debouncing
                               }}
                               className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
-                            />
+                            /> */}
                           </div>
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -327,7 +326,7 @@ export const CreateTransferFormRecipientPage = ({
                   <FormField
                     control={form.control}
                     name="receivedAmount"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
                         <FormLabel className="text-xs font-work-sans text-teal-800 font-medium">
                           They receive
@@ -338,21 +337,18 @@ export const CreateTransferFormRecipientPage = ({
                               {target}
                             </span>
                             <Input
-                              type="number"
-                              placeholder="10"
                               {...field}
-                              value={field.value || targetCurrency || ""}
-                              disabled={isPending}
-                              onChange={(e) => {
-                                const newValue = Number(e.target.value || 0);
-                                field.onChange(newValue); // Sync with form state
-                                handleTargetCurrencyChange(newValue);
-                              }}
-                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                              type="number"
+                              step="0.01" // Allows integers and decimals
+                              placeholder="10"
+                              className={`border ${
+                                fieldState.error
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              } rounded-md`}
                             />
                           </div>
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -360,7 +356,7 @@ export const CreateTransferFormRecipientPage = ({
                 <FormField
                   control={form.control}
                   name="transferReason"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel className="text-xs font-work-sans text-teal-800 font-medium">
                         Transfer Reason
@@ -386,7 +382,11 @@ export const CreateTransferFormRecipientPage = ({
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormMessage />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {fieldState.error.message}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -413,6 +413,7 @@ export const CreateTransferFormRecipientPage = ({
                     size="sm"
                     disabled={isPending}
                     variant="zap"
+                    onClick={onSubmit}
                   >
                     Start transfer
                   </Button>

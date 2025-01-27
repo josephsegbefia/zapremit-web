@@ -13,12 +13,12 @@ type RequestType = InferRequestType<(typeof client.api.transfers)["$post"]>;
 export const useCreateTransfer = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ResponseType, Error, RequestType>({
+  const mutation = useMutation<ResponseType, { message: string }, RequestType>({
     mutationFn: async ({ json }) => {
       const response = await client.api.transfers["$post"]({ json });
 
       if (!response.ok) {
-        throw new Error("Failed to create transfer, try again later");
+        throw new Error("Failed to initiate transfer, try again later");
       }
 
       return await response.json();
@@ -27,8 +27,8 @@ export const useCreateTransfer = () => {
       toast.success("Transfer initiated");
       queryClient.invalidateQueries({ queryKey: ["transfers"] });
     },
-    onError: () => {
-      toast.error("Transfer failed");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

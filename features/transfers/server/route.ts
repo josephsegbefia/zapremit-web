@@ -20,11 +20,11 @@ const app = new Hono().post(
     const user = c.get("user");
 
     const userId = user.$id;
-    const custmer = await getCustomer();
+    const customer = await getCustomer();
     const originCountry = await getCustomerOriginCountry();
     const beneficiaryCountry = await getCustomerBeneficiaryCountry();
 
-    const cusotmerId = custmer?.$id;
+    const customerId = customer?.$id;
     const originCountryName = originCountry?.name;
     const beneficiaryCountryName = beneficiaryCountry?.name;
     const originCountryCurrency = originCountry?.currency;
@@ -41,32 +41,38 @@ const app = new Hono().post(
       transferReason,
     } = c.req.valid("json");
 
+    // const sentAmountFloat = parseFloat(sentAmount);
+    // const receivedAmountFloat = parseFloat(receivedAmount);
+    const transferFeeFloat = parseFloat(transferFee);
     const profit = calculateTransferProfit(
       exchangeRate,
-      transferFee,
+      transferFeeFloat,
       sentAmount,
       receivedAmount
     );
 
+    const sentAmtString = sentAmount.toString();
+    const receivedAmtString = receivedAmount.toString();
     const transfer = await databases.createDocument(
       DATABASE_ID,
       TRANSFERS_ID,
       ID.unique(),
       {
         recipientId,
-        receivedAmount,
-        sentAmount,
+        receivedAmount: receivedAmtString,
+        sentAmount: sentAmtString,
         adjustedExchangeRate,
         exchangeRate,
         transferReason,
         userId: userId,
-        customerId: cusotmerId,
+        customerId: customerId,
         originCountry: originCountryName,
         destinationCountry: beneficiaryCountryName,
         originCurrency: originCountryCurrency,
         destinationCurrency: beneficiaryCountryCurrency,
         profit: profit,
         status: "PENDING",
+        transferFee: parseFloat(transferFee),
       }
     );
 

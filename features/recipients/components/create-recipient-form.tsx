@@ -77,7 +77,6 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
       customerId,
     };
 
-    console.log(finalValues);
     mutate(
       { json: finalValues },
       {

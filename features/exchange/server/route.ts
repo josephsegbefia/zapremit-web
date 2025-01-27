@@ -40,7 +40,6 @@ const app = new Hono()
         );
 
         const actualRate = actualRates.documents[0];
-        console.log(actualRate);
         return c.json({ conversion_rate: actualRate.rate });
       } catch (error) {
         console.error("Error fetching exchange rate:", error);
