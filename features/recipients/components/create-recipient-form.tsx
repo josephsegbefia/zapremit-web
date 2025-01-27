@@ -113,9 +113,12 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
 
   return (
     <Card className="w-full h-full border-none shadow-none">
-      <CardHeader className="flex p-7">
+      <CardHeader className="flex py-5 px-7">
         <CardTitle className="text-xl font-bold font-work-sans text-teal-800">
           Add New Recipient
+          <p className="text-xs font-work-sans text-teal-700 font-medium">
+            Fill the form below to add a recipient
+          </p>
         </CardTitle>
       </CardHeader>
       <div className="px-7">
@@ -135,7 +138,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                      <FormLabel className="text-xs font-work-sans font-medium text-teal-800">
                         Recipient Name
                       </FormLabel>
                       <FormControl>
@@ -143,6 +146,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           placeholder="Enter recipient's full name"
                           {...field}
                           disabled={isPending}
+                          className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                         />
                       </FormControl>
                       <FormMessage />
@@ -154,7 +158,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                      <FormLabel className="text-xs font-work-sans text-teal-800">
                         Recipient Email (Optional)
                       </FormLabel>
                       <FormControl>
@@ -163,6 +167,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           {...field}
                           value={field.value || ""}
                           disabled={isPending}
+                          className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                         />
                       </FormControl>
                     </FormItem>
@@ -175,7 +180,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                       name="callingCode"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="text-sm font-worl-sans text-teal-800">
+                          <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
                             Calling Code
                           </FormLabel>
                           <FormControl>
@@ -183,6 +188,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                               placeholder="Country Code"
                               value={customerCallingCode}
                               disabled={true}
+                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                             />
                           </FormControl>
                         </FormItem>
@@ -195,7 +201,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-worl-sans text-teal-800">
+                          <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
                             Phone Number
                           </FormLabel>
                           <FormControl>
@@ -203,6 +209,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                               placeholder="Enter beneficiary phone number"
                               {...field}
                               disabled={isPending}
+                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                             />
                           </FormControl>
                           <FormMessage />
@@ -217,7 +224,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                      <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
                         Street Address
                       </FormLabel>
                       <FormControl>
@@ -226,6 +233,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           {...field}
                           value={field.value || ""}
                           disabled={isPending}
+                          className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                         />
                       </FormControl>
                     </FormItem>
@@ -236,7 +244,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                      <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
                         City
                       </FormLabel>
                       <FormControl>
@@ -245,6 +253,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           {...field}
                           value={field.value || ""}
                           disabled={isPending}
+                          className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                         />
                       </FormControl>
                     </FormItem>
@@ -255,7 +264,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                   name="mobileWallet"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-worl-sans text-teal-800">
+                      <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
                         Select Mobile Wallet (Optional)
                       </FormLabel>
                       <FormControl>
@@ -265,12 +274,21 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           disabled={isPending}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Mobile Wallet" />
+                            <SelectValue
+                              placeholder="Select Mobile Wallet"
+                              className="w-full h-8 px-8 py-3 pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             {mobileWallets?.map((wallet) => (
-                              <SelectItem key={wallet} value={wallet}>
-                                {wallet}
+                              <SelectItem
+                                key={wallet}
+                                value={wallet}
+                                className="w-full h-8 px-8 py-3 pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                              >
+                                <p className="w-full h-8 px-8 py-2 pr-10 text-teal-800 font-work-sans font-semibold text-xs">
+                                  {wallet}
+                                </p>
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -286,8 +304,10 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                     return (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                         <div className="space-y-0.5">
-                          <FormLabel>Transfer Notifications</FormLabel>
-                          <FormDescription>
+                          <FormLabel className="text-xs font-work-sans text-teal-800 font-semibold">
+                            Transfer Notifications
+                          </FormLabel>
+                          <FormDescription className="text-xs text-teal-700 font-medium">
                             Send transfer updates to the recipient
                           </FormDescription>
                         </div>
