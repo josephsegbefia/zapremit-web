@@ -119,7 +119,7 @@ export const CreateTransferFormRecipientPage = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebounceBase(baseCurrency);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [baseCurrency]);
@@ -127,7 +127,7 @@ export const CreateTransferFormRecipientPage = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebounceTarget(targetCurrency);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [targetCurrency]);
