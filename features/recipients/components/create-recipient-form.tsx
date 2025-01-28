@@ -149,7 +149,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                           className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs font-work-sans" />
                     </FormItem>
                   )}
                 />
@@ -212,7 +212,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                               className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs font-work-sans" />
                         </FormItem>
                       )}
                     />
@@ -324,10 +324,10 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                 />
               </div>
               <DottedSeparator className="py-7" />
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-start gap-3">
                 <Button
                   type="button"
-                  size="lg"
+                  size="sm"
                   variant="destructive"
                   onClick={onCancel}
                   disabled={isPending}
@@ -337,7 +337,7 @@ export const CreateRecipientForm = ({ onCancel }: CreateRecipientFormProps) => {
                 </Button>
                 <Button
                   type="submit"
-                  size="lg"
+                  size="sm"
                   disabled={isPending}
                   variant="zap"
                 >

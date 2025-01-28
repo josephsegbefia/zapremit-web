@@ -10,13 +10,14 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import { DottedSeparator } from "./dotted-separator";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
 import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
+import { useCreateDashboardTransferModal } from "@/features/transfers/hooks/use-create-dashboard-transfer-modal";
 
 const ExchangeRateCard = () => {
+  const { open } = useCreateDashboardTransferModal();
   const {
     data: beneficiaryCountry,
     isLoading: isLoadingBeneficiaryCountry,
@@ -53,11 +54,12 @@ const ExchangeRateCard = () => {
             asChild
             size="sm"
             className="bg-teal-600 font-work-sans text-white hover:bg-white hover:text-teal-600 border hover:border-teal-600 cursor-pointer"
+            onClick={open}
           >
-            <Link href="/">
+            <span className="flex">
               <Send />
               Send Money Now
-            </Link>
+            </span>
           </Button>
         </CardTitle>
         <DottedSeparator className="mt-4" />
