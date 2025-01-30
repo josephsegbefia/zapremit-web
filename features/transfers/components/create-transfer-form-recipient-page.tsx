@@ -178,6 +178,7 @@ export const CreateTransferFormRecipientPage = ({
   useEffect(() => {
     console.log(baseCurrency, targetCurrency);
   }, [baseCurrency, targetCurrency]);
+
   const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
     const finalValues = {
       ...values,
@@ -293,7 +294,7 @@ export const CreateTransferFormRecipientPage = ({
                   <FormField
                     control={form.control}
                     name="sentAmount"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
                         <FormLabel className="text-xs font-work-sans text-teal-800 font-medium">
                           You send
@@ -315,11 +316,12 @@ export const CreateTransferFormRecipientPage = ({
                                 field.onChange(newValue); // Sync with form state
                                 handleBaseCurrencyChange(newValue);
                               }}
-                              className="w-full h-8 px-8 py-3 border rounded-md pr-10 text-teal-800 font-work-sans font-semibold text-xs"
+                              className={`border ${
+                                fieldState.error ? "border-red-500" : ""
+                              } rounded-md w-full h-8 px-8 py-3  pr-10 text-teal-800 font-work-sans font-semibold text-xs`}
                             />
                           </div>
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
