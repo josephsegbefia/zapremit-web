@@ -96,7 +96,7 @@ export const CreateTransferFormRecipientPage = ({
     resolver: zodResolver(
       createTransferSchema.omit({
         recipientId: true,
-        exchangeRate: true,
+        // exchangeRate: true, Not needed anymore provided in the backend directly
         adjustedExchangeRate: true,
       })
     ),
@@ -186,7 +186,7 @@ export const CreateTransferFormRecipientPage = ({
       receivedAmount: targetCurrency || 0,
       recipientId: recipientId,
       adjustedExchangeRate: adjustedExchangeRate ?? 0,
-      exchangeRate: exchangeRate ?? 0,
+      // exchangeRate: exchangeRate ?? 0,
     };
 
     console.log("FINAL VALUES===>", finalValues);

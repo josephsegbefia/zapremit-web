@@ -10,6 +10,7 @@ import {
   getCustomerBeneficiaryCountry,
   getCustomerOriginCountry,
 } from "@/features/customers/queries";
+import { getActualExRate } from "@/features/exchange/queries";
 
 const app = new Hono().post(
   "/",
@@ -28,16 +29,19 @@ const app = new Hono().post(
     const originCountryName = originCountry?.name;
     const beneficiaryCountryName = beneficiaryCountry?.name;
     const originCountryCurrency = originCountry?.currency;
+    const base = originCountry?.currencyCode;
+    const target = beneficiaryCountry?.currencyCode;
     const beneficiaryCountryCurrency = beneficiaryCountry?.currency;
 
     const transferFee = await getTransferFee();
+    const actualRate = await getActualExRate(base, target);
 
     const {
       recipientId,
       receivedAmount,
       sentAmount,
       adjustedExchangeRate,
-      exchangeRate,
+      // exchangeRate,
       transferReason,
     } = c.req.valid("json");
 
@@ -45,7 +49,7 @@ const app = new Hono().post(
     // const receivedAmountFloat = parseFloat(receivedAmount);
     const transferFeeFloat = parseFloat(transferFee);
     const profit = calculateTransferProfit(
-      exchangeRate,
+      actualRate,
       transferFeeFloat,
       sentAmount,
       receivedAmount
@@ -62,7 +66,7 @@ const app = new Hono().post(
         receivedAmount: receivedAmtString,
         sentAmount: sentAmtString,
         adjustedExchangeRate,
-        exchangeRate,
+        exchangeRate: actualRate,
         transferReason,
         userId: userId,
         customerId: customerId,

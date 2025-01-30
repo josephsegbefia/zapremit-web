@@ -104,7 +104,7 @@ export const CreateDashboardTransferForm = ({
     recipient.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectChange = (value: any) => {
+  const handleSelectChange = (value: string) => {
     setSelectedRecipientId(value);
     console.log("Selected Recipient $id", value);
   };
