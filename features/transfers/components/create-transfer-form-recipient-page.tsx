@@ -20,7 +20,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
-import { useGetActualRate } from "@/features/exchange/api/use-get-actual-rate";
 import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
 import { useEffect, useState } from "react";
 import { useCreateTransfer } from "../api/use-create-transfer";
@@ -80,11 +79,6 @@ export const CreateTransferFormRecipientPage = ({
   const base = originCountry?.currencyCode || "";
   const target = beneficiaryCountry?.currencyCode || "";
 
-  const { data: exchangeRate, isLoading: isLoadingRate } = useGetActualRate({
-    base,
-    target,
-  });
-
   const {
     data: adjustedExchangeRate,
     isLoading: isLoadingAdjustedExchangeRate,
@@ -113,7 +107,6 @@ export const CreateTransferFormRecipientPage = ({
     isLoadingBeneficiaryCountry ||
     isFetchingBeneficiaryCountry ||
     isFetchingOriginCountry ||
-    isLoadingRate ||
     isLoadingAdjustedExchangeRate;
 
   useEffect(() => {

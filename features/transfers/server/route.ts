@@ -34,7 +34,7 @@ const app = new Hono().post(
     const beneficiaryCountryCurrency = beneficiaryCountry?.currency;
 
     const transferFee = await getTransferFee();
-    const actualRate = await getActualExRate(base, target);
+    const actualRate = await getActualExRate(base || "", target || "");
 
     const {
       recipientId,
@@ -48,12 +48,15 @@ const app = new Hono().post(
     // const sentAmountFloat = parseFloat(sentAmount);
     // const receivedAmountFloat = parseFloat(receivedAmount);
     const transferFeeFloat = parseFloat(transferFee);
-    const profit = calculateTransferProfit(
-      actualRate,
-      transferFeeFloat,
-      sentAmount,
-      receivedAmount
-    );
+    let profit;
+    if (actualRate) {
+      profit = calculateTransferProfit(
+        actualRate,
+        transferFeeFloat,
+        sentAmount,
+        receivedAmount
+      );
+    }
 
     const sentAmtString = sentAmount.toString();
     const receivedAmtString = receivedAmount.toString();
