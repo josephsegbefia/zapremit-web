@@ -205,6 +205,10 @@ export const CreateDashboardTransferForm = ({
     router.push(`/playground/confirm-transfer?${queryParams}`);
   };
 
+  const ready = !selectedRecipientId || !targetCurrency || !baseCurrency;
+
+  console.log("READY===>", ready);
+
   // const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
   //   const finalValues = {
   //     ...values,
@@ -439,7 +443,7 @@ export const CreateDashboardTransferForm = ({
                     type="button"
                     size="sm"
                     onClick={handleClick}
-                    // disabled={isPending}
+                    disabled={ready}
                     variant="zap"
                   >
                     Next
