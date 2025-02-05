@@ -8,7 +8,7 @@ import { RiAddCircleFill } from "react-icons/ri";
 
 interface TransferStatusViewSwitcherProps {
   isRecipientDetailsPage: boolean;
-  recipientId: string;
+  recipientId?: string;
 }
 
 export const TransferStatusViewSwitcher = ({

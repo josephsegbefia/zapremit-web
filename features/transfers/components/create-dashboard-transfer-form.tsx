@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { url } from "inspector";
 
 const TRANSFER_REASONS = [
   { reason: "Family & Friends Support", value: "FAMILY_AND_FRIENDS_SUPPORT" },
@@ -48,6 +50,7 @@ interface CreateDashboardTransferFormProps {
 export const CreateDashboardTransferForm = ({
   onCancel,
 }: CreateDashboardTransferFormProps) => {
+  const router = useRouter();
   const [baseCurrency, setBaseCurrency] = useState<number | null>(null);
   const [targetCurrency, setTargetCurrency] = useState<number | null>(null);
   const [debounceBase, setDebounceBase] = useState<number | null>(null);
@@ -180,6 +183,27 @@ export const CreateDashboardTransferForm = ({
   useEffect(() => {
     console.log(baseCurrency, targetCurrency);
   }, [baseCurrency, targetCurrency]);
+
+  let recipientId: string;
+  if (selectedRecipientId) {
+    recipientId = selectedRecipientId;
+  }
+  const amountSent = form.getValues("sentAmount").toString();
+  const amountReceived = form.getValues("receivedAmount").toString();
+  const exchangeRate = adjustedExchangeRate || 0;
+  const reason = form.getValues("transferReason");
+
+  const handleClick = () => {
+    const queryParams = new URLSearchParams({
+      recipientId: recipientId,
+      sent: amountSent,
+      receiveable: targetCurrency?.toString() || "",
+      rate: exchangeRate.toString(),
+      reason: reason,
+    });
+
+    router.push(`/playground/confirm-transfer?${queryParams}`);
+  };
 
   // const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
   //   const finalValues = {
@@ -414,6 +438,7 @@ export const CreateDashboardTransferForm = ({
                   <Button
                     type="button"
                     size="sm"
+                    onClick={handleClick}
                     // disabled={isPending}
                     variant="zap"
                   >
