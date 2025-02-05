@@ -189,7 +189,7 @@ export const CreateDashboardTransferForm = ({
     recipientId = selectedRecipientId;
   }
   const amountSent = form.getValues("sentAmount").toString();
-  const amountReceived = form.getValues("receivedAmount").toString();
+  const amountReceived = targetCurrency?.toString() || "";
   const exchangeRate = adjustedExchangeRate || 0;
   const reason = form.getValues("transferReason");
 
@@ -197,7 +197,7 @@ export const CreateDashboardTransferForm = ({
     const queryParams = new URLSearchParams({
       recipientId: recipientId,
       sent: amountSent,
-      receiveable: targetCurrency?.toString() || "",
+      receivable: amountReceived,
       rate: exchangeRate.toString(),
       reason: reason,
     });
