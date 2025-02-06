@@ -58,8 +58,11 @@ const app = new Hono().post(
       );
     }
 
+    const totalPaid = sentAmount + transferFeeFloat;
     const sentAmtString = sentAmount.toString();
     const receivedAmtString = receivedAmount.toString();
+    const totalPaidString = totalPaid.toString();
+
     const transfer = await databases.createDocument(
       DATABASE_ID,
       TRANSFERS_ID,
@@ -79,6 +82,7 @@ const app = new Hono().post(
         destinationCurrency: beneficiaryCountryCurrency,
         profit: profit,
         status: "PENDING",
+        totalPaid: totalPaidString,
         transferFee: parseFloat(transferFee),
       }
     );

@@ -9,8 +9,24 @@ import { useFetchRecipient } from "@/features/recipients/api/use-fetch-recipient
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-get-customer-beneficiary-country";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
+import { useGetTransferFee } from "@/features/fees-and-promotions/api/use-get-transfer-fee";
+import { useCreateTransfer } from "@/features/transfers/api/use-create-transfer";
 
+type TransferReason =
+  | "FAMILY_AND_FRIENDS_SUPPORT"
+  | "PAYMENT_FOR_GOODS_AND_SERVICES"
+  | "DONATIONS"
+  | "SAVINGS";
+
+type TransferData = {
+  recipientId: string;
+  sentAmount: number;
+  receivedAmount: number;
+  adjustedExchangeRate: number;
+  transferReason: TransferReason;
+};
 const ConfirmTransfer = () => {
+  const { mutate, isPending } = useCreateTransfer();
   const searchParams = useSearchParams();
   const recipientId = searchParams.get("recipientId") || "";
   const sentAmount = searchParams.get("sent");
@@ -25,8 +41,52 @@ const ConfirmTransfer = () => {
   const { data: beneficiaryCountry, isLoading: isLoadingBeneficiaryCountry } =
     useGetCustomerBeneficiaryCountry();
 
+  const { data: transferFee, isLoading: isLoadingTranferFee } =
+    useGetTransferFee();
+
+  let totalPaid;
+  if (sentAmount) {
+    totalPaid = parseFloat(transferFee) + parseFloat(sentAmount);
+  }
+
+  let values: TransferData | undefined;
+
+  if (sentAmount && receivedAmount && adjustedExchangeRate && transferReason) {
+    values = {
+      recipientId: recipientId,
+      sentAmount: parseFloat(sentAmount),
+      receivedAmount: parseFloat(receivedAmount),
+      adjustedExchangeRate: parseFloat(adjustedExchangeRate),
+      transferReason: transferReason as TransferReason,
+    };
+  }
+
+  const sendMoney = () => {
+    if (!values) {
+      console.error("Missing required values");
+      return;
+    }
+
+    mutate(
+      { json: values },
+      {
+        onSuccess: () => {
+          // if (onCancel) {
+          //   onCancel();
+          // }
+        },
+        onError: (error) => {
+          console.error("Error creating recipient:", error);
+        },
+      }
+    );
+  };
+
   const isLoadingInfo =
-    isLoading || isLoadingBeneficiaryCountry || isLoadingBeneficiaryCountry;
+    isLoading ||
+    isLoadingBeneficiaryCountry ||
+    isLoadingOriginCountry ||
+    isLoadingTranferFee;
 
   if (isLoadingInfo) {
     return (
@@ -167,7 +227,9 @@ const ConfirmTransfer = () => {
                 <p className="text-sm font-semibold font-work-sans text-teal-800">
                   Transfer Fee
                 </p>
-                <p className="text-sm font-medium font-work-sans text-teal-800"></p>
+                <p className="text-sm font-medium font-work-sans text-teal-800">
+                  {transferFee} {originCountry?.currencyCode}
+                </p>
               </div>
             </div>
             <div className="px-7 py-2">
@@ -178,7 +240,16 @@ const ConfirmTransfer = () => {
                 <p className="text-sm font-semibold font-work-sans text-teal-800">
                   Total due
                 </p>
-                <p className="text-sm font-medium font-work-sans text-teal-800"></p>
+                <p className="text-sm font-medium font-work-sans text-teal-800">
+                  {totalPaid} {originCountry?.currencyCode}
+                </p>
+              </div>
+            </div>
+            <div className="px-10">
+              <div className="flex justify-right gap-x-2 py-2">
+                <Button variant="zap" onClick={sendMoney} disabled={isPending}>
+                  {isPending ? "Sending money..." : "Confirm & Send"}
+                </Button>
               </div>
             </div>
           </CardContent>
