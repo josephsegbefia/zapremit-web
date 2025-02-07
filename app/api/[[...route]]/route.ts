@@ -8,6 +8,7 @@ import exchange from "@/features/exchange/server/route";
 import recipients from "@/features/recipients/server/route";
 import transfers from "@/features/transfers/server/route";
 import fees from "@/features/fees-and-promotions/server/route";
+import storage from "@/features/transfer-details-storage/server/route";
 
 const app = new Hono().basePath("/api");
 
@@ -18,7 +19,8 @@ const routes = app
   .route("/exchange", exchange)
   .route("/recipients", recipients)
   .route("/transfers", transfers)
-  .route("/fees-and-promotions", fees);
+  .route("/fees-and-promotions", fees)
+  .route("/transfer-details-storage", storage);
 
 export const GET = handle(app);
 export const POST = handle(app);
