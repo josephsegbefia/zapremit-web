@@ -11,6 +11,7 @@ import { useGetCustomerBeneficiaryCountry } from "@/features/customers/api/use-g
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
 import { useGetTransferFee } from "@/features/fees-and-promotions/api/use-get-transfer-fee";
 import { useCreateTransfer } from "@/features/transfers/api/use-create-transfer";
+import { useGetTransferConfirmation } from "@/features/transfer-details-storage/api/use-get-transfer-confirmation";
 
 type TransferReason =
   | "FAMILY_AND_FRIENDS_SUPPORT"
@@ -28,13 +29,19 @@ type TransferData = {
 const ConfirmTransfer = () => {
   const { mutate, isPending } = useCreateTransfer();
   const searchParams = useSearchParams();
-  const recipientId = searchParams.get("recipientId") || "";
-  const sentAmount = searchParams.get("sent");
-  const receivedAmount = searchParams.get("receivable");
-  const adjustedExchangeRate = searchParams.get("rate");
-  const transferReason = searchParams.get("reason");
+  const confirmationId = searchParams.get("id") || "";
 
-  const { data: recipient, isLoading } = useFetchRecipient(recipientId);
+  const {
+    data: confirmationData,
+    isLoading: isLoadingConfirmationData,
+    error: confirmationDataError,
+  } = useGetTransferConfirmation(confirmationId);
+
+  let recipientId;
+  if (confirmationData) {
+    recipientId = confirmationData.recipientId;
+  }
+  const { data: recipient, isLoading } = useFetchRecipient(recipientId || "");
   const { data: originCountry, isLoading: isLoadingOriginCountry } =
     useGetCustomerOriginCountry();
 
@@ -45,19 +52,20 @@ const ConfirmTransfer = () => {
     useGetTransferFee();
 
   let totalPaid;
-  if (sentAmount) {
-    totalPaid = parseFloat(transferFee) + parseFloat(sentAmount);
+  if (confirmationData?.sentAmount) {
+    totalPaid =
+      parseFloat(transferFee) + parseFloat(confirmationData?.sentAmount);
   }
 
   let values: TransferData | undefined;
 
-  if (sentAmount && receivedAmount && adjustedExchangeRate && transferReason) {
+  if (confirmationData) {
     values = {
-      recipientId: recipientId,
-      sentAmount: parseFloat(sentAmount),
-      receivedAmount: parseFloat(receivedAmount),
-      adjustedExchangeRate: parseFloat(adjustedExchangeRate),
-      transferReason: transferReason as TransferReason,
+      recipientId: recipientId || "",
+      sentAmount: parseFloat(confirmationData.sentAmount),
+      receivedAmount: parseFloat(confirmationData.receivedAmount),
+      adjustedExchangeRate: parseFloat(confirmationData.adjustedExchangeRate),
+      transferReason: confirmationData.transferReason as TransferReason,
     };
   }
 
@@ -84,6 +92,7 @@ const ConfirmTransfer = () => {
 
   const isLoadingInfo =
     isLoading ||
+    isLoadingConfirmationData ||
     isLoadingBeneficiaryCountry ||
     isLoadingOriginCountry ||
     isLoadingTranferFee;
@@ -181,7 +190,7 @@ const ConfirmTransfer = () => {
                   You send
                 </p>
                 <p className="text-sm font-medium font-work-sans text-teal-800">
-                  {sentAmount}{" "}
+                  {confirmationData?.sentAmount}
                   <span className="text-sm font-semibold font-work-sans text-teal-800">
                     {originCountry?.currencyCode}
                   </span>
@@ -193,7 +202,7 @@ const ConfirmTransfer = () => {
                   They receive
                 </p>
                 <p className="text-sm font-medium font-work-sans text-teal-800">
-                  {receivedAmount}{" "}
+                  {confirmationData?.receivedAmount}
                   <span className="text-sm font-semibold font-work-sans text-teal-800">
                     {beneficiaryCountry?.currencyCode}
                   </span>
@@ -205,7 +214,7 @@ const ConfirmTransfer = () => {
                   Purpose
                 </p>
                 <p className="text-sm font-medium font-work-sans text-teal-800">
-                  {transferReason}
+                  {confirmationData?.transferReason}
                 </p>
               </div>
             </div>
@@ -218,7 +227,8 @@ const ConfirmTransfer = () => {
                   Rate
                 </p>
                 <p className="text-sm font-medium font-work-sans text-teal-800">
-                  1 {originCountry?.currencyCode} = {adjustedExchangeRate}{" "}
+                  1 {originCountry?.currencyCode} ={" "}
+                  {confirmationData?.adjustedExchangeRate}{" "}
                   {beneficiaryCountry?.currencyCode}
                 </p>
               </div>
