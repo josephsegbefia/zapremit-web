@@ -229,13 +229,14 @@ export const CreateDashboardTransferForm = ({
                 </p>
               )}
 
-              <Select onValueChange={handleSelectChange}>
+              <Select onValueChange={handleSelectChange} disabled={isPending}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Search or select a recipient" />
                 </SelectTrigger>
                 <SelectContent>
                   <div className="p-2">
                     <Input
+                      disabled={isPending}
                       placeholder="Search recipients by name"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -276,6 +277,7 @@ export const CreateDashboardTransferForm = ({
                             </span>
 
                             <Input
+                              disabled={isPending}
                               type="number"
                               placeholder="10"
                               {...field}
@@ -296,6 +298,7 @@ export const CreateDashboardTransferForm = ({
                   />
 
                   <FormField
+                    disabled={isPending}
                     control={form.control}
                     name="receivedAmount"
                     render={({ field, fieldState }) => (
@@ -345,6 +348,7 @@ export const CreateDashboardTransferForm = ({
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
+                          disabled={isPending}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select a transfer reason that matches your reason" />

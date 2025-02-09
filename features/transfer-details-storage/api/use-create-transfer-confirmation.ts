@@ -28,7 +28,8 @@ export const useCreateTransferConfirmation = () => {
       return await response.json();
     },
     onSuccess: ({ data }) => {
-      router.push(`/playground/confirm-transfer?id=${data.$id}`);
+      // router.push(`/playground/confirm-transfer?id=${data.$id}`);
+      toast.success("Details collected");
     },
     onError: () => {
       toast.error("Something went wrong");
