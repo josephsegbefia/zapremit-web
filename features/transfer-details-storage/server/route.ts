@@ -35,30 +35,43 @@ const app = new Hono()
       const user = c.get("user");
 
       if (!user) {
-        return c.json({ erorr: "No user found" }, 400);
+        return c.json({ error: "No user found" }, 400);
       }
 
-      const {
-        recipientId,
-        sentAmount,
-        receivedAmount,
-        adjustedExchangeRate,
-        transferReason,
-      } = c.req.valid("json");
-
-      const confirmation = await databases.createDocument(
-        DATABASE_ID,
-        TRANSFER_DETAILS_STORAGE_ID,
-        ID.unique(),
-        {
+      try {
+        const {
           recipientId,
           sentAmount,
           receivedAmount,
           adjustedExchangeRate,
           transferReason,
-        }
-      );
-      return c.json({ data: confirmation });
+        } = c.req.valid("json");
+
+        const sentAmountString = sentAmount.toString();
+        const receivedAmountString = receivedAmount.toString();
+        const adjustedExchangeRateString = adjustedExchangeRate.toString();
+
+        const confirmation = await databases.createDocument(
+          DATABASE_ID,
+          TRANSFER_DETAILS_STORAGE_ID,
+          ID.unique(),
+          {
+            recipientId,
+            sentAmount: sentAmountString,
+            receivedAmount: receivedAmountString,
+            adjustedExchangeRate: adjustedExchangeRateString,
+            transferReason,
+          }
+        );
+
+        return c.json({ data: confirmation });
+      } catch (error) {
+        console.error("Error creating transfer confirmation:", error);
+        return c.json(
+          { error: "An error occurred while processing your request" },
+          500
+        );
+      }
     }
   );
 

@@ -18,7 +18,6 @@ import { z } from "zod";
 import { useGetCustomerOriginCountry } from "@/features/customers/api/use-get-customer-origin-country";
 import { useGetAdjustedExchangeRate } from "@/features/exchange/api/use-get-adjusted-exchange-rate";
 import { useGetRecipients } from "@/features/recipients/api/use-get-recipients";
-// import { useGetActualRate } from "@/features/exchange/api/use-get-actual-rate";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,8 +29,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCreateTransferConfirmation } from "@/features/transfer-details-storage/api/use-create-transfer-confirmation";
 import { useRouter } from "next/navigation";
-import { url } from "inspector";
 
 const TRANSFER_REASONS = [
   { reason: "Family & Friends Support", value: "FAMILY_AND_FRIENDS_SUPPORT" },
@@ -57,9 +56,10 @@ export const CreateDashboardTransferForm = ({
   const [debounceTarget, setDebounceTarget] = useState<number | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRecipientId, setSelectedRecipientId] = useState(null);
+  const [selectedRecipientId, setSelectedRecipientId] = useState<string | null>(
+    null
+  );
 
-  // const { mutate, isPending } = useCreateTransfer();
   const { data: recipients, isLoading: isLoadingRecipients } =
     useGetRecipients();
   const {
@@ -77,23 +77,17 @@ export const CreateDashboardTransferForm = ({
   const base = originCountry?.currencyCode || "";
   const target = beneficiaryCountry?.currencyCode || "";
 
-  // const { data: exchangeRate, isLoading: isLoadingRate } = useGetActualRate({
-  //   base,
-  //   target,
-  // });
-
   const {
     data: adjustedExchangeRate,
     isLoading: isLoadingAdjustedExchangeRate,
   } = useGetAdjustedExchangeRate({ base, target });
 
-  // const { open } = useConfirmTransferDetailsModal();
+  const { mutate, isPending } = useCreateTransferConfirmation();
 
   const form = useForm<z.infer<typeof createTransferSchema>>({
     resolver: zodResolver(
       createTransferSchema.omit({
         recipientId: true,
-        // exchangeRate: true, Removed because it has been provided in the backend
         adjustedExchangeRate: true,
       })
     ),
@@ -108,7 +102,7 @@ export const CreateDashboardTransferForm = ({
     recipient.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelectChange = (value: any) => {
+  const handleSelectChange = (value: string) => {
     setSelectedRecipientId(value);
     console.log("Selected Recipient $id", value);
   };
@@ -141,99 +135,53 @@ export const CreateDashboardTransferForm = ({
     if (debounceBase !== null && adjustedExchangeRate) {
       const convertedTarget = (debounceBase * adjustedExchangeRate).toFixed(2);
       setTargetCurrency(parseFloat(convertedTarget));
+      form.setValue("receivedAmount", parseFloat(convertedTarget));
     }
   }, [debounceBase, adjustedExchangeRate]);
 
   useEffect(() => {
     if (debounceTarget !== null && adjustedExchangeRate) {
-      if (adjustedExchangeRate) {
-        const convertedBase = (debounceTarget / adjustedExchangeRate).toFixed(
-          2
-        );
-
-        setBaseCurrency(parseFloat(convertedBase));
-      }
+      const convertedBase = (debounceTarget / adjustedExchangeRate).toFixed(2);
+      setBaseCurrency(parseFloat(convertedBase));
+      form.setValue("sentAmount", parseFloat(convertedBase));
     }
   }, [debounceTarget, adjustedExchangeRate]);
 
-  // const handleBaseCurrencyChange = (value: number) => {
-  //   setBaseCurrency(value);
-  //   if (!value) {
-  //     setTargetCurrency(0);
-  //   }
-  // };
-
   const handleBaseCurrencyChange = (value: number) => {
     setBaseCurrency(value);
-    setTimeout(() => form.setValue("sentAmount", value), 0);
+    form.setValue("sentAmount", value);
   };
-
-  // const handleTargetCurrencyChange = (value: number) => {
-  //   setTargetCurrency(value);
-  //   if (!value) {
-  //     setBaseCurrency(0);
-  //   }
-  // };
 
   const handleTargetCurrencyChange = (value: number) => {
     setTargetCurrency(value);
-    setTimeout(() => form.setValue("receivedAmount", value), 0);
+    form.setValue("receivedAmount", value);
   };
 
-  useEffect(() => {
-    console.log(baseCurrency, targetCurrency);
-  }, [baseCurrency, targetCurrency]);
+  const onSubmit = async (values: z.infer<typeof createTransferSchema>) => {
+    if (!selectedRecipientId) {
+      console.error("Recipient ID is required");
+      return;
+    }
 
-  let recipientId: string;
-  if (selectedRecipientId) {
-    recipientId = selectedRecipientId;
-  }
-  const amountSent = form.getValues("sentAmount").toString();
-  const amountReceived = targetCurrency?.toString() || "";
-  const exchangeRate = adjustedExchangeRate || 0;
-  const reason = form.getValues("transferReason");
+    const finalValues = {
+      ...values,
+      recipientId: selectedRecipientId,
+      adjustedExchangeRate: adjustedExchangeRate || 0,
+    };
 
-  const handleClick = () => {
-    const queryParams = new URLSearchParams({
-      recipientId: recipientId,
-      sent: amountSent,
-      receivable: amountReceived,
-      rate: exchangeRate.toString(),
-      reason: reason,
-    });
-
-    router.push(`/playground/confirm-transfer?${queryParams}`);
+    console.log("FINAL VALUES", finalValues);
+    mutate(
+      { json: finalValues },
+      {
+        onSuccess: ({ data }) => {
+          router.push(`/playground/confirm-transfer?id=${data.$id}`);
+        },
+        onError: (error) => {
+          console.error("Error saving confirmation details:", error);
+        },
+      }
+    );
   };
-
-  const ready = !selectedRecipientId || !targetCurrency || !baseCurrency;
-
-  console.log("READY===>", ready);
-
-  // const onSubmit = (values: z.infer<typeof createTransferSchema>) => {
-  //   const finalValues = {
-  //     ...values,
-  //     sentAmount: baseCurrency || 0,
-  //     receivedAmount: targetCurrency || 0,
-  //     recipientId: selectedRecipientId || "",
-  //     adjustedExchangeRate: adjustedExchangeRate ?? 0,
-  //     // exchangeRate: exchangeRate ?? 0,
-  //   };
-
-  //   console.log("FINAL VALUES===>", finalValues);
-  //   // Put mutate function here
-  //   if (!selectedRecipientId) return;
-  //   mutate(
-  //     { json: finalValues },
-  //     {
-  //       onSuccess: () => {
-  //         onCancel?.();
-  //       },
-  //       onError: (error) => {
-  //         console.log("Error creating transfer:", error.message);
-  //       },
-  //     }
-  //   );
-  // };
 
   if (isBusy) {
     return (
@@ -249,6 +197,7 @@ export const CreateDashboardTransferForm = ({
       </Card>
     );
   }
+
   return (
     <>
       <Card className="w-full h-full border-none shadow-none">
@@ -273,9 +222,7 @@ export const CreateDashboardTransferForm = ({
         </div>
         <CardContent className="p-4">
           <Form {...form}>
-            <form
-            // onSubmit={form.handleSubmit(onSubmit)}
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               {!selectedRecipientId && (
                 <p className="text-xs font-medium text-red-500 font-work-sans my-2">
                   Please do well to select a recipient
@@ -333,10 +280,9 @@ export const CreateDashboardTransferForm = ({
                               placeholder="10"
                               {...field}
                               value={field.value || baseCurrency || ""}
-                              // disabled={isPending}
                               onChange={(e) => {
                                 const newValue = Number(e.target.value || 0);
-                                field.onChange(newValue); // Sync with form state
+                                field.onChange(newValue);
                                 handleBaseCurrencyChange(newValue);
                               }}
                               className={`border ${
@@ -371,10 +317,9 @@ export const CreateDashboardTransferForm = ({
                               placeholder="10"
                               {...field}
                               value={field.value || targetCurrency || ""}
-                              // disabled={isPending}
                               onChange={(e) => {
                                 const newValue = Number(e.target.value || 0);
-                                field.onChange(newValue); // Sync with form state
+                                field.onChange(newValue);
                                 handleTargetCurrencyChange(newValue);
                               }}
                               className={`border ${
@@ -400,7 +345,6 @@ export const CreateDashboardTransferForm = ({
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          // disabled={isPending}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select a transfer reason that matches your reason" />
@@ -434,16 +378,14 @@ export const CreateDashboardTransferForm = ({
                     size="sm"
                     variant="destructive"
                     onClick={onCancel}
-                    // disabled={isPending}
                     className={cn(!onCancel && "invisible")}
                   >
                     Cancel
                   </Button>
                   <Button
-                    type="button"
+                    type="submit"
                     size="sm"
-                    onClick={handleClick}
-                    disabled={ready}
+                    disabled={!selectedRecipientId || isPending}
                     variant="zap"
                   >
                     Next
