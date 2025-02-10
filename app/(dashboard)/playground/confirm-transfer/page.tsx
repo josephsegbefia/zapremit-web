@@ -84,7 +84,7 @@ const ConfirmTransfer = () => {
           // }
         },
         onError: (error) => {
-          console.error("Error creating recipient:", error);
+          console.error("Error initiating transfer:", error);
         },
       }
     );
